@@ -1,4 +1,4 @@
-// ignore_for_file: assetsrary_private_types_in_public_api
+// ignore_for_file: assetsrary_private_types_in_public_api, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';

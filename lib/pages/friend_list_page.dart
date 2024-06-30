@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/add_friend_page.dart';
+import 'package:flutter_application_1/pages/user_detail_page.dart';
 
 class FriendListPage extends StatefulWidget {
   const FriendListPage({super.key});
@@ -9,16 +12,60 @@ class FriendListPage extends StatefulWidget {
 }
 
 class _FriendListPageState extends State<FriendListPage> {
-  final List<Map<String, String>> friendList = [
-    {'userId': '1', 'username': 'user1', 'avatar': 'User_img1.png'},
-    {'userId': '2', 'username': 'user2', 'avatar': 'User_img2.png'},
-    {'userId': '3', 'username': 'user3', 'avatar': 'User_img3.png'},
-  ];
-  String? currentUserId = '12345';
+  List<Map<String, String>> friendList = [];
+  String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
     super.initState();
+    _fetchFriendList();
+  }
+
+  Future<void> _fetchFriendList() async {
+    try {
+      final currentUserSnapshot = await FirebaseFirestore.instance
+          .collection('auths')
+          .doc(currentUserId)
+          .get();
+      final currentUserData =
+          currentUserSnapshot.data() as Map<String, dynamic>;
+
+      List<DocumentReference> friendRefs =
+          List<DocumentReference>.from(currentUserData['list_friend'] ?? []);
+
+      List<Map<String, String>> friends = [];
+      for (DocumentReference friendRef in friendRefs) {
+        final friendSnapshot = await friendRef.get();
+        final friendData = friendSnapshot.data() as Map<String, dynamic>;
+
+        String avatarPath = friendData['avatar'] ?? 'default_avatar.png';
+        String avatarUrl = await _getAvatarUrl(avatarPath);
+
+        friends.add({
+          'userId': friendRef.id,
+          'username': friendData['email'].split('@')[0],
+          'avatar': avatarUrl
+        });
+      }
+
+      setState(() {
+        friendList = friends;
+      });
+    } catch (e) {
+      debugPrint('Error fetching friend list: $e');
+    }
+  }
+
+  Future<String> _getAvatarUrl(String avatarPath) async {
+    try {
+      String url = await FirebaseStorage.instance
+          .ref('avatars/$avatarPath')
+          .getDownloadURL();
+      return url;
+    } catch (e) {
+      debugPrint('Error fetching avatar: $e');
+      return 'https://example.com/default_avatar.png'; // Provide a default image URL if needed
+    }
   }
 
   @override
@@ -40,8 +87,7 @@ class _FriendListPageState extends State<FriendListPage> {
                   child: ListTile(
                     leading: SizedBox(
                       child: friendList[index]['avatar'] != null
-                          ? Image.asset(
-                              "assets/images/${friendList[index]['avatar']}")
+                          ? Image.network(friendList[index]['avatar']!)
                           : null,
                     ),
                     title: Text(

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
-
-class User {
-  final String id;
-  final String username;
-
-  User({required this.id, required this.username});
-}
+import 'package:flutter_application_1/models/structure/auth_model.dart';
+import 'package:flutter_application_1/pages/user_detail_page.dart';
+import 'package:flutter_application_1/services/firestore/auths_store.dart';
 
 class AddFriendPage extends StatefulWidget {
   const AddFriendPage({super.key});
@@ -16,18 +12,20 @@ class AddFriendPage extends StatefulWidget {
 }
 
 class _AddFriendPageState extends State<AddFriendPage> {
-  final List<User> allUsers = [
-    User(id: '1', username: 'user1'),
-    User(id: '2', username: 'user2'),
-    User(id: '3', username: 'user3'),
-  ];
-  List<User> filteredUsers = [];
+  final AuthStore _authStore = AuthStore();
+  List<Auth> allUsers = [];
+  List<Auth> filteredUsers = [];
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    filteredUsers = allUsers;
+    _authStore.getAllUsers().listen((users) {
+      setState(() {
+        allUsers = users;
+        filteredUsers = users;
+      });
+    });
     searchController.addListener(() {
       filterUsers();
     });
@@ -37,7 +35,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
     final query = searchController.text.toLowerCase();
     setState(() {
       filteredUsers = allUsers
-          .where((user) => user.username.toLowerCase().contains(query))
+          .where((user) => user.email.toLowerCase().contains(query))
           .toList();
     });
   }
@@ -107,7 +105,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
               child: ListView.builder(
                 itemCount: filteredUsers.length,
                 itemBuilder: (context, index) {
-                  User user = filteredUsers[index];
+                  Auth user = filteredUsers[index];
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 25.0),
                     child: InkWell(
@@ -116,7 +114,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                UserDetailPage(userId: user.id.toString()),
+                                UserDetailPage(userId: user.uid),
                           ),
                         );
                       },
@@ -137,7 +135,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  user.username,
+                                  user.email.split('@')[0],
                                   style: const TextStyle(
                                     color: Color(0xFF1B1E28),
                                     fontSize: 18,
@@ -156,24 +154,6 @@ class _AddFriendPageState extends State<AddFriendPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class UserDetailPage extends StatelessWidget {
-  final String userId;
-
-  const UserDetailPage({required this.userId, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Detail'),
-      ),
-      body: Center(
-        child: Text('User ID: $userId'),
       ),
     );
   }

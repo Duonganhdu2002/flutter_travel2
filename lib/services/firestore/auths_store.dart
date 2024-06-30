@@ -3,10 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/structure/auth_model.dart';
 
 class AuthStore {
-  final CollectionReference auths = FirebaseFirestore.instance.collection("auths");
+  final CollectionReference auths =
+      FirebaseFirestore.instance.collection("auths");
+
+  Stream<List<Auth>> getAllUsers() {
+    return auths.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Auth.fromSnapshot(doc)).toList();
+    });
+  }
 
   Future<void> addUser(String uid, String email, String password) async {
-    final auth = Auth(uid: uid, email: email, password: password, avatar: 'default_avatar.png');
+    final auth = Auth(
+        uid: uid,
+        email: email,
+        password: password,
+        avatar: 'default_avatar.png');
     final Map<String, dynamic> userData = auth.toMap();
     await auths.doc(uid).set(userData);
   }
@@ -49,7 +60,8 @@ class AuthStore {
       DocumentSnapshot userSnapshot = await userDoc.get();
       if (userSnapshot.exists) {
         List<dynamic> bookmarks = userSnapshot.get('book_mark_list') ?? [];
-        DocumentReference placeRef = FirebaseFirestore.instance.collection('places').doc(placeId);
+        DocumentReference placeRef =
+            FirebaseFirestore.instance.collection('places').doc(placeId);
         bool isBookmarked = bookmarks.contains(placeRef);
         if (isBookmarked) {
           bookmarks.remove(placeRef);
@@ -72,7 +84,8 @@ class AuthStore {
   Stream<List<DocumentReference>> getUserBookmarks(String uid) {
     return auths.doc(uid).snapshots().map((snapshot) {
       if (snapshot.exists) {
-        return (snapshot.get('book_mark_list') as List<dynamic>).cast<DocumentReference>();
+        return (snapshot.get('book_mark_list') as List<dynamic>)
+            .cast<DocumentReference>();
       } else {
         return [];
       }

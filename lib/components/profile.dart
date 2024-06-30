@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/user_image.dart';
+import 'package:flutter_application_1/models/structure/auth_model.dart';
 import 'package:flutter_application_1/pages/edit_profile.dart';
-import 'package:flutter_application_1/services/firestore/auth_store.dart';
+import 'package:flutter_application_1/services/firestore/auths_store.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileUser extends StatefulWidget {
@@ -27,18 +28,17 @@ class _ProfileUserState extends State<ProfileUser> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color(0xFFFFFFFF),
-        body: StreamBuilder<Map<String, dynamic>?>(
+        body: StreamBuilder<Auth?>(
           stream: authStore.getUserById(userId),
-          builder: (context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+          builder: (context, AsyncSnapshot<Auth?> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
               if (snapshot.hasData && snapshot.data != null) {
-                Map<String, dynamic>? userData = snapshot.data!;
-                return 
-                Padding(
+                Auth? userData = snapshot.data;
+                return Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Center(
                     child: Column(
@@ -51,7 +51,7 @@ class _ProfileUserState extends State<ProfileUser> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                userData['fullname'] ?? "Unknown",
+                                userData?.fullName ?? "Unknown",
                                 style: const TextStyle(
                                     color: Color(0xFF1B1E28),
                                     fontSize: 28,
@@ -59,7 +59,7 @@ class _ProfileUserState extends State<ProfileUser> {
                               ),
                             ),
                             Text(
-                              userData['email'],
+                              userData?.email ?? "No email",
                               style: const TextStyle(
                                   color: Color(0xFF7D848D), fontSize: 17),
                             ),
@@ -239,28 +239,28 @@ class _ProfileUserState extends State<ProfileUser> {
                                       "assets/images/fav_list.svg",
                                       "Bookmarked",
                                       () {
-                                        // Xử lý hành động khi hình ảnh được nhấn vào
+                                        // Handle action when the image is pressed
                                       },
                                     ),
                                     itemColumnList(
                                       "assets/images/plane.svg",
                                       "Previous Trips",
                                       () {
-                                        // Xử lý hành động khi hình ảnh được nhấn vào
+                                        // Handle action when the image is pressed
                                       },
                                     ),
                                     itemColumnList(
                                       "assets/images/setting.svg",
                                       "Settings",
                                       () {
-                                        // Xử lý hành động khi hình ảnh được nhấn vào
+                                        // Handle action when the image is pressed
                                       },
                                     ),
                                     itemColumnList(
                                       "assets/images/world.svg",
                                       "Version",
                                       () {
-                                        // Xử lý hành động khi hình ảnh được nhấn vào
+                                        // Handle action when the image is pressed
                                       },
                                     ),
                                     const SizedBox(

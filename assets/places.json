@@ -1,0 +1,728 @@
+[{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c446"
+  },
+  "category_id": {
+    "$oid": "665c6361027d501dd733c42c"
+  },
+  "name": "Núi Lang Biang Hiking Trail",
+  "address": {
+    "street": "Đường Lang Biang",
+    "ward": "Xã Lát",
+    "district": "Huyện Lạc Dương",
+    "landmark_id": {
+      "$oid": "666042715081ff425294f00a"
+    },
+    "province_id": {
+      "$oid": "665c5564027d501dd733c3b3"
+    },
+    "country_id": {
+      "$oid": "665c3cdb51e22fff03c7cbc3"
+    }
+  },
+  "description": "Đường mòn leo núi Lang Biang cung cấp một chuyến phiêu lưu kỳ thú với cảnh quan thiên nhiên tuyệt đẹp. Du khách có thể ngắm nhìn toàn cảnh Đà Lạt từ đỉnh núi.",
+  "photos": [
+    "nui-lang-biang-hiking-trail1.png",
+    "nui-lang-biang-hiking-trail2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c444"
+  },
+  "category_id": {
+    "$oid": "665c6361027d501dd733c42a"
+  },
+  "name": "Hồ Xuân Hương Cafe",
+  "address": {
+    "street": "Đường Trần Quốc Toản",
+    "ward": "Phường 1",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": {
+      "$oid": "666042715081ff425294f00a"
+    },
+    "province_id": {
+      "$oid": "665c5564027d501dd733c3b3"
+    },
+    "country_id": {
+      "$oid": "665c3cdb51e22fff03c7cbc3"
+    }
+  },
+  "description": "Một quán cafe ven hồ với cảnh quan đẹp, phục vụ đồ uống và bánh ngọt. Đây là nơi lý tưởng để thư giãn và ngắm cảnh.",
+  "photos": [
+    "ho-xuan-huong-cafe1.png",
+    "ho-xuan-huong-cafe2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c447"
+  },
+  "category_id": {
+    "$oid": "665c6361027d501dd733c42d"
+  },
+  "name": "Dinh Bảo Đại Museum",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 3",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3e9",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bảo tàng Dinh Bảo Đại lưu giữ nhiều hiện vật và tư liệu về cuộc sống và sự nghiệp của vua Bảo Đại. Du khách có thể tìm hiểu về lịch sử và kiến trúc của dinh thự này.",
+  "photos": [
+    "dinh-bao-dai-museum1.png",
+    "dinh-bao-dai-museum2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c44d"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Vườn Hoa Đà Lạt Flower Garden",
+  "address": {
+    "street": "Đường Trần Quốc Toản",
+    "ward": "Phường 8",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3ef",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Vườn Hoa Đà Lạt là một trong những địa điểm hấp dẫn nhất của thành phố với hàng ngàn loài hoa khoe sắc. Du khách có thể tham quan, chụp ảnh và thưởng thức cảnh quan tuyệt đẹp tại đây.",
+  "photos": [
+    "vuon-hoa-da-lat1.png",
+    "vuon-hoa-da-lat2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c445"
+  },
+  "category_id": {
+    "$oid": "665c6361027d501dd733c42b"
+  },
+  "name": "Thung Lũng Tình Yêu Park",
+  "address": {
+    "street": "Đường Mai Anh Đào",
+    "ward": "Phường 8",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": {
+      "$oid": "666042715081ff425294f00a"
+    },
+    "province_id": {
+      "$oid": "665c5564027d501dd733c3b3"
+    },
+    "country_id": {
+      "$oid": "665c3cdb51e22fff03c7cbc3"
+    }
+  },
+  "description": "Công viên với các khu vườn hoa rực rỡ và các con đường mòn yên tĩnh, lý tưởng cho các cặp đôi và gia đình thư giãn và vui chơi.",
+  "photos": [
+    "thung-lung-tinh-yeu-park1.png",
+    "thung-lung-tinh-yeu-park2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c44b"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Thác Datanla Waterfall",
+  "address": {
+    "street": "Đường Đèo Prenn",
+    "ward": "Phường 3",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3ed",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Thác Datanla là một trong những thác nước đẹp nhất ở Đà Lạt, nổi tiếng với dòng nước trong lành chảy qua những tảng đá lớn. Thác nằm trong một khu rừng xanh mát và có nhiều hoạt động giải trí cho du khách như trượt thác, leo núi và đi cáp treo.",
+  "photos": [
+    "thac-datanla1.png",
+    "thac-datanla2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c44c"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Ga Đà Lạt Station",
+  "address": {
+    "street": "Đường Quang Trung",
+    "ward": "Phường 10",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3ee",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Ga Đà Lạt là một trong những nhà ga cổ nhất ở Việt Nam, được xây dựng vào thời kỳ Pháp thuộc. Nhà ga nổi tiếng với kiến trúc độc đáo và là điểm đến yêu thích của du khách muốn tìm hiểu về lịch sử đường sắt của Đà Lạt.",
+  "photos": [
+    "ga-da-lat-station1.png",
+    "ga-da-lat-station2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c44f"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Bảo Tàng Lâm Đồng Museum",
+  "address": {
+    "street": "Đường Hùng Vương",
+    "ward": "Phường 10",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3f1",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bảo tàng Lâm Đồng trưng bày nhiều hiện vật và tư liệu lịch sử, văn hóa của vùng đất Lâm Đồng. Du khách có thể tìm hiểu về lịch sử và văn hóa đặc sắc của địa phương này.",
+  "photos": [
+    "bao-tang-lam-dong1.png",
+    "bao-tang-lam-dong2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c450"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Công Viên Yersin Park",
+  "address": {
+    "street": "Đường Trần Quốc Toản",
+    "ward": "Phường 10",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3f2",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Công viên Yersin là nơi lý tưởng để dạo chơi và thư giãn, với nhiều cây xanh và khu vực vui chơi cho trẻ em.",
+  "photos": [
+    "cong-vien-yersin1.png",
+    "cong-vien-yersin2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c448"
+  },
+  "category_id": {
+    "$oid": "665c6361027d501dd733c42a"
+  },
+  "name": "Thiền Viện Trúc Lâm Meditation Center",
+  "address": {
+    "street": "Đường Trúc Lâm Yên Tử",
+    "ward": "Phường 10",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3ea",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Thiền viện lớn nhất tại Đà Lạt, nơi du khách có thể tham gia các buổi thiền và tận hưởng không gian thanh tịnh và yên bình.",
+  "photos": [
+    "thien-vien-truc-lam1.png",
+    "thien-vien-truc-lam2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c449"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Chợ Đà Lạt Market",
+  "address": {
+    "street": "Đường Nguyễn Thị Minh Khai",
+    "ward": "Phường 1",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3eb",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Chợ Đà Lạt nổi tiếng với các sản phẩm địa phương như rau củ, hoa quả và các sản phẩm thủ công mỹ nghệ. Đây là nơi tuyệt vời để mua sắm và thưởng thức ẩm thực địa phương.",
+  "photos": [
+    "cho-da-lat-market1.png",
+    "cho-da-lat-market2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c44a"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Đồi Chè Cầu Đất Tea Plantation",
+  "address": {
+    "street": "Đường Hùng Vương",
+    "ward": "Xã Xuân Trường",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3ec",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Đồi Chè Cầu Đất nổi tiếng với những đồi chè xanh mướt và phong cảnh hữu tình. Du khách có thể tham quan nông trại chè, tìm hiểu về quy trình trồng và chế biến chè.",
+  "photos": [
+    "doi-che-cau-dat1.png",
+    "doi-che-cau-dat2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6b97027d501dd733c44e"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Thiền Viện Vạn Hạnh Meditation Center",
+  "address": {
+    "street": "Đường Phù Đổng Thiên Vương",
+    "ward": "Phường 8",
+    "district": "Thành phố Đà Lạt",
+    "landmark_id": "665c57c5027d501dd733c3f0",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Thiền Viện Vạn Hạnh là một trong những thiền viện lớn ở Đà Lạt, cung cấp không gian yên tĩnh và thanh tịnh cho du khách muốn tìm hiểu về thiền và Phật giáo.",
+  "photos": [
+    "thien-vien-van-hanh1.png",
+    "thien-vien-van-hanh2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c455"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Bãi Sau",
+  "address": {
+    "street": "Đường Thùy Vân",
+    "ward": "Phường 2",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3e9",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bãi Sau, còn được biết đến là Bãi Sau, là một trong những bãi biển phổ biến nhất tại Vũng Tàu. Nổi tiếng với bãi cát mịn và sóng biển êm, nơi đây lý tưởng cho việc bơi lội và các hoạt động thể thao dưới nước.",
+  "photos": [
+    "bai-sau1.png",
+    "bai-sau2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c45d"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Suối nước nóng Bình Châu",
+  "address": {
+    "street": "Đường Suối Nước Nóng",
+    "ward": "Xã Bình Châu",
+    "district": "Huyện Xuyên Mộc",
+    "landmark_id": "665c57c5027d501dd733c3f1",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Suối nước nóng Bình Châu là một điểm đến nổi tiếng với các suối nước nóng tự nhiên, nơi du khách có thể tắm nước nóng và thư giãn.",
+  "photos": [
+    "suoi-nuoc-nong-binh-chau1.png",
+    "suoi-nuoc-nong-binh-chau2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c460"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Đền Hùng Vương",
+  "address": {
+    "street": "Đường Hùng Vương",
+    "ward": "Phường 4",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3f4",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Đền Hùng Vương là một ngôi đền cổ kính nằm trong khu vực trung tâm của thành phố Vũng Tàu, là nơi thờ cúng và tổ chức các lễ hội truyền thống.",
+  "photos": [
+    "den-hung-vuong1.png",
+    "den-hung-vuong2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c461"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Làng chài Bến Đầm",
+  "address": {
+    "street": "Đường Bến Đầm",
+    "ward": "Xã Bến Đầm",
+    "district": "Huyện Côn Đảo",
+    "landmark_id": "665c57c5027d501dd733c3f5",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Làng chài Bến Đầm là một làng chài cổ xưa, nổi tiếng với các hoạt động đánh bắt hải sản và phong cảnh hữu tình.",
+  "photos": [
+    "lang-chai-ben-dam1.png",
+    "lang-chai-ben-dam2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c462"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Hồ Tràm",
+  "address": {
+    "street": "Đường Hồ Tràm",
+    "ward": "Xã Phước Thuận",
+    "district": "Huyện Xuyên Mộc",
+    "landmark_id": "665c57c5027d501dd733c3f6",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Hồ Tràm là một trong những bãi biển đẹp nhất tại Bà Rịa - Vũng Tàu, nổi tiếng với bãi cát trắng và nước biển trong xanh.",
+  "photos": [
+    "ho-tram1.png",
+    "ho-tram2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c463"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Suối nước nóng Bình Châu",
+  "address": {
+    "street": "Đường Suối Nước Nóng",
+    "ward": "Xã Bình Châu",
+    "district": "Huyện Xuyên Mộc",
+    "landmark_id": "665c57c5027d501dd733c3f7",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Suối nước nóng Bình Châu là một điểm đến nổi tiếng với các suối nước nóng tự nhiên, nơi du khách có thể tắm nước nóng và thư giãn.",
+  "photos": [
+    "suoi-nuoc-nong-binh-chau1.png",
+    "suoi-nuoc-nong-binh-chau2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c452"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Bãi Biển Vũng Tàu",
+  "address": {
+    "street": "Đường Thùy Vân",
+    "ward": "Phường 2",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3e6",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bãi Biển Vũng Tàu là điểm đến phổ biến tại Bà Rịa - Vũng Tàu, nổi tiếng với bãi cát trắng mịn và nước biển trong xanh. Bãi biển thích hợp cho việc tắm nắng, bơi lội và tham gia các hoạt động thể thao dưới nước.",
+  "photos": [
+    "bai-bien-vung-tau1.png",
+    "bai-bien-vung-tau2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c454"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Quần đảo Côn Đảo",
+  "address": {
+    "street": "Đường Côn Đảo",
+    "ward": "Huyện Côn Đảo",
+    "district": "Huyện Côn Đảo",
+    "landmark_id": "665c57c5027d501dd733c3e8",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Quần đảo Côn Đảo là một nhóm các hòn đảo ngoài khơi Bà Rịa - Vũng Tàu, nổi tiếng với vẻ đẹp tự nhiên hoang sơ và lịch sử phong phú. Các hòn đảo có bãi biển nguyên sơ, nước biển trong xanh và sinh vật biển đa dạng.",
+  "photos": [
+    "quan-dao-con-dao1.png",
+    "quan-dao-con-dao2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c458"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Hải đăng Vũng Tàu",
+  "address": {
+    "street": "Đường Hải Đăng",
+    "ward": "Phường 2",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3ec",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Hải đăng Vũng Tàu là một ngọn hải đăng lịch sử nằm trên đỉnh núi Nhỏ. Ngọn hải đăng cung cấp tầm nhìn tuyệt đẹp về biển và thành phố.",
+  "photos": [
+    "vung-tau-lighthouse1.png",
+    "vung-tau-lighthouse2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c45f"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Nhà thờ Đức Mẹ Bãi Dâu",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 5",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3f3",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Nhà thờ Đức Mẹ Bãi Dâu là một nhà thờ nổi tiếng tại Vũng Tàu, được xây dựng trên ngọn đồi nhìn ra biển.",
+  "photos": [
+    "nha-tho-duc-me-bai-dau1.png",
+    "nha-tho-duc-me-bai-dau2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c464"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Chùa Thích Ca Phật Đài",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 5",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3f8",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Chùa Thích Ca Phật Đài là một ngôi chùa nổi tiếng tại Vũng Tàu, được xây dựng trên ngọn đồi nhìn ra biển.",
+  "photos": [
+    "thich-ca-phat-dai1.png",
+    "thich-ca-phat-dai2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c466"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Khu du lịch Hồ Mây",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 1",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3fa",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Khu du lịch Hồ Mây là một khu vui chơi giải trí và nghỉ dưỡng với nhiều hoạt động hấp dẫn như trượt thác, leo núi và thăm quan vườn thú.",
+  "photos": [
+    "khu-du-lich-ho-may1.png",
+    "khu-du-lich-ho-may2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c453"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Tượng Chúa Kitô Vua",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 1",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3e7",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Tượng Chúa Kitô Vua là một bức tượng khổng lồ nhìn ra biển, cung cấp tầm nhìn toàn cảnh về thành phố và bờ biển. Đây là một trong những bức tượng Chúa cao nhất châu Á.",
+  "photos": [
+    "tuong-chua-kito-vua1.png",
+    "tuong-chua-kito-vua2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c456"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Bãi Trước",
+  "address": {
+    "street": "Đường Hạ Long",
+    "ward": "Phường 1",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3ea",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bãi Trước, còn gọi là Bãi Trước, là một bãi biển đẹp nằm ngay trung tâm thành phố Vũng Tàu. Đây là nơi lý tưởng để thư giãn và ngắm cảnh biển.",
+  "photos": [
+    "bai-truoc1.png",
+    "bai-truoc2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c457"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Công viên Hồ Mây",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 5",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3eb",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Công viên Hồ Mây là một khu vui chơi giải trí nằm trên núi Lớn. Công viên có nhiều trò chơi và hoạt động giải trí cho du khách, từ trượt nước, đu quay cho đến vườn thú.",
+  "photos": [
+    "ho-may-park1.png",
+    "ho-may-park2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c45a"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Núi Minh Đạm",
+  "address": {
+    "street": "Đường Minh Đạm",
+    "ward": "Xã Phước Hưng",
+    "district": "Huyện Long Điền",
+    "landmark_id": "665c57c5027d501dd733c3ee",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Núi Minh Đạm là một khu di tích lịch sử và thiên nhiên, nơi du khách có thể leo núi và khám phá các hang động từng được sử dụng trong chiến tranh.",
+  "photos": [
+    "minh-dam-mountain1.png",
+    "minh-dam-mountain2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c45e"
+  },
+  "category_id": "665c6361027d501dd733c42a",
+  "name": "Bảo tàng Vũng Tàu",
+  "address": {
+    "street": "Đường Trần Phú",
+    "ward": "Phường 1",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3f2",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bảo tàng Vũng Tàu là nơi trưng bày các hiện vật và tài liệu liên quan đến lịch sử và văn hóa của Vũng Tàu.",
+  "photos": [
+    "bao-tang-vung-tau1.png",
+    "bao-tang-vung-tau2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c459"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Bãi biển Long Hải",
+  "address": {
+    "street": "Đường Long Hải",
+    "ward": "Xã Long Hải",
+    "district": "Huyện Long Điền",
+    "landmark_id": "665c57c5027d501dd733c3ed",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bãi biển Long Hải nằm ở huyện Long Điền, nổi tiếng với cát vàng và nước biển trong xanh. Bãi biển ít đông đúc hơn các bãi biển khác, là nơi lý tưởng để thư giãn.",
+  "photos": [
+    "long-hai-beach1.png",
+    "long-hai-beach2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c45b"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Đồi Con Heo",
+  "address": {
+    "street": "Đường Hạ Long",
+    "ward": "Phường 2",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3ef",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Đồi Con Heo, còn gọi là Pig Hill, là một điểm ngắm cảnh nổi tiếng tại Vũng Tàu, cung cấp tầm nhìn tuyệt đẹp về thành phố và bờ biển.",
+  "photos": [
+    "doi-con-heo1.png",
+    "doi-con-heo2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c45c"
+  },
+  "category_id": "665c6361027d501dd733c42c",
+  "name": "Bãi biển Hồ Cốc",
+  "address": {
+    "street": "Đường Hồ Cốc",
+    "ward": "Xã Bình Châu",
+    "district": "Huyện Xuyên Mộc",
+    "landmark_id": "665c57c5027d501dd733c3f0",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bãi biển Hồ Cốc nổi tiếng với bãi cát trắng và nước biển trong xanh, là một trong những bãi biển đẹp và hoang sơ nhất tại Bà Rịa - Vũng Tàu.",
+  "photos": [
+    "ho-coc-beach1.png",
+    "ho-coc-beach2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c465"
+  },
+  "category_id": "665c6361027d501dd733c42d",
+  "name": "Đồi cừu Suối Nghệ",
+  "address": {
+    "street": "Đường Suối Nghệ",
+    "ward": "Xã Suối Nghệ",
+    "district": "Huyện Châu Đức",
+    "landmark_id": "665c57c5027d501dd733c3f9",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Đồi cừu Suối Nghệ là điểm tham quan nổi tiếng với những đàn cừu trắng trên đồi cỏ xanh, là nơi lý tưởng để chụp ảnh và thư giãn.",
+  "photos": [
+    "doi-cuu-suoi-nghe1.png",
+    "doi-cuu-suoi-nghe2.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6cab027d501dd733c467"
+  },
+  "category_id": "665c6361027d501dd733c42b",
+  "name": "Bến tàu cánh ngầm",
+  "address": {
+    "street": "Đường Hạ Long",
+    "ward": "Phường 2",
+    "district": "Thành phố Vũng Tàu",
+    "landmark_id": "665c57c5027d501dd733c3fb",
+    "province_id": "665c5564027d501dd733c3b3",
+    "country_id": "665c3cdb51e22fff03c7cbc3"
+  },
+  "description": "Bến tàu cánh ngầm là điểm khởi hành cho các chuyến tàu cánh ngầm từ Vũng Tàu đi TP.HCM và các điểm đến khác.",
+  "photos": [
+    "ben-tau-canh-ngam1.png",
+    "ben-tau-canh-ngam2.png"
+  ]
+}]

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/home_page.dart';
 import 'package:flutter_application_1/pages/onboarding_page.dart';
 import 'package:flutter_application_1/services/auth_authentication.dart';
-import 'package:flutter_application_1/services/firestore/auth_store.dart';
+import 'package:flutter_application_1/services/firestore/auths_store.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color textFieldBackgroundColor = const Color(0xFFF7F7F9);
@@ -78,11 +78,8 @@ class _LoginFormState extends State<LoginForm> {
 
       User? user = AuthAuthentication().currentUser;
       if (user != null) {
-        await AuthStore().addUser(
-          uid: user.uid, 
-          email: emailController.text,
-          password: passwordController.text,
-        );
+        await AuthStore()
+            .addUser(user.uid, emailController.text, passwordController.text);
       }
 
       Navigator.pushReplacement(

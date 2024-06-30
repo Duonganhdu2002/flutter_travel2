@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
+import 'package:flutter_application_1/components/combo_icon.dart';
+import 'package:flutter_application_1/components/home_component.dart';
 import 'package:flutter_application_1/components/logout_icon.dart';
+import 'package:flutter_application_1/components/message.dart';
 import 'package:flutter_application_1/components/nav_bar.dart';
 import 'package:flutter_application_1/components/notification_icon.dart';
+import 'package:flutter_application_1/components/planning_component.dart';
 import 'package:flutter_application_1/components/profile.dart';
+import 'package:flutter_application_1/components/search_component.dart';
 import 'package:flutter_application_1/pages/notification_home_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,10 +29,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   final List<Widget> page = [
-    // const HomeComponent(key: PageStorageKey('HomeComponent')),
-    // const PlanningComponent(key: PageStorageKey('PlanningComponent')),
-    // const SearchComponent(key: PageStorageKey('SearchComponent')),
-    // const MessageComponent(key: PageStorageKey('MessageComponent')),
+    const HomeComponent(key: PageStorageKey('HomeComponent')),
+    const PlanningComponent(key: PageStorageKey('PlanningComponent')),
+    const SearchComponent(key: PageStorageKey('SearchComponent')),
+    const MessageComponent(key: PageStorageKey('MessageComponent')),
     const ProfileUser(key: PageStorageKey('ProfileUser')),
   ];
 
@@ -93,8 +98,7 @@ class _HomePageState extends State<HomePage> {
             "Messages",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          // rightWidget: ComboIcon(),
-          rightWidget: Text("Combo icon"),
+          rightWidget: ComboIcon(),
         );
       case 4:
         return const CustomBar(

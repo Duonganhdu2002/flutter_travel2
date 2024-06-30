@@ -1,0 +1,90 @@
+[{
+  "_id": {
+    "$oid": "665c6361027d501dd733c42d"
+  },
+  "name": "Shopping Mall",
+  "iconCategory": [
+    "shoppingmall.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c42e"
+  },
+  "name": "Cinema",
+  "iconCategory": [
+    "cinema.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c432"
+  },
+  "name": "Park",
+  "iconCategory": [
+    "park.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c433"
+  },
+  "name": "Beach",
+  "iconCategory": [
+    "beach.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c435"
+  },
+  "name": "Cultural Center",
+  "iconCategory": [
+    "culturalCenter.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c428"
+  },
+  "name": "Restaurant",
+  "iconCategory": [
+    "restaurant.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c42b"
+  },
+  "name": "Amusement Park",
+  "iconCategory": [
+    "amusementPark.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c42f"
+  },
+  "name": "Theater",
+  "iconCategory": [
+    "theater.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c430"
+  },
+  "name": "Zoo",
+  "iconCategory": [
+    "zoo.png"
+  ]
+},
+{
+  "_id": {
+    "$oid": "665c6361027d501dd733c436"
+  },
+  "name": "Library",
+  "iconCategory": [
+    "library.png"
+  ]
+}]

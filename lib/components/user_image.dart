@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: assetsrary_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -31,8 +31,10 @@ class _UserImageState extends State<UserImage> {
 
   Future<void> fetchImageUrl() async {
     String imageName = await getImageNameFromFirestore();
-    String url =
-        await FirebaseStorage.instance.ref().child(imageName).getDownloadURL();
+    String url = await FirebaseStorage.instance
+        .ref()
+        .child("avatars/$imageName")
+        .getDownloadURL();
     setState(() {
       imageUrl = url;
     });

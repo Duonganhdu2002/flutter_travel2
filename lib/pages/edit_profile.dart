@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/components/user_image.dart';
-import 'package:flutter_application_1/services/firestore/auth_store.dart';
+import 'package:flutter_application_1/services/firestore/auths_store.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -36,10 +36,10 @@ class _EditProfileState extends State<EditProfile>
     var userData = await authStore.getUserById(userId).first;
     if (userData != null) {
       setState(() {
-        fullNameController.text = userData['fullname'] ?? '';
-        locationController.text = userData['location'] ?? '';
-        phoneController.text = userData['phone'] ?? '';
-      });
+        fullNameController.text = userData.fullName;
+        locationController.text = userData.location ?? '';
+        phoneController.text = userData.phone ?? '';
+      }); 
     }
   }
 

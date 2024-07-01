@@ -41,7 +41,8 @@ class _ChatPageState extends State<ChatPage> {
     });
 
     _fetchAvatars();
-    _messageStream = messageStore.streamMessagesForConversation(widget.conversationId);
+    _messageStream =
+        messageStore.streamMessagesForConversation(widget.conversationId);
   }
 
   Future<void> _fetchAvatars() async {
@@ -139,61 +140,62 @@ class _ChatPageState extends State<ChatPage> {
                       }
 
                       if (message.senderId.id == widget.userId) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                margin: const EdgeInsets.symmetric(vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[100],
-                                  borderRadius: BorderRadius.circular(8),
+                        return IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue[100],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(message.text),
                                 ),
-                                child: Text(message.text),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            if (showAvatar)
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(avatarUrl),
-                              ),
-                          ],
+                              const SizedBox(width: 8),
+                              if (showAvatar)
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(avatarUrl),
+                                  ),
+                                ),
+                            ],
+                          ),
                         );
                       } else {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            if (showAvatar)
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(avatarUrl),
-                              ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                margin: const EdgeInsets.symmetric(vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(8),
+                        return IntrinsicHeight(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (showAvatar)
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(avatarUrl),
+                                  ),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(message.text),
-                                    if (showAvatar)
-                                      Text(
-                                        message.senderId.id,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                  ],
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(message.text),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         );
                       }
                     },

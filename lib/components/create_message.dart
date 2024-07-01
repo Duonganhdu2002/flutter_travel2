@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
+import 'package:flutter_application_1/components/create_group.dart';
 import 'package:flutter_application_1/components/search_input.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -14,6 +18,7 @@ class CreateMessage extends StatefulWidget {
 class _CreateMessageState extends State<CreateMessage> {
   List<Map<String, String>> friends = [];
   List<Map<String, String>> filteredFriends = [];
+  String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -21,11 +26,73 @@ class _CreateMessageState extends State<CreateMessage> {
     _fetchFriends();
   }
 
-  void _fetchFriends() async {}
+  Future<void> _fetchFriends() async {
+    try {
+      final currentUserSnapshot = await FirebaseFirestore.instance
+          .collection('auths')
+          .doc(currentUserId)
+          .get();
+      final currentUserData =
+          currentUserSnapshot.data() as Map<String, dynamic>;
 
-  void _handleSearch(String query) {}
+      List<DocumentReference> friendRefs =
+          List<DocumentReference>.from(currentUserData['list_friend'] ?? []);
 
-  void _navigateToChat() async {}
+      List<Map<String, String>> friendsList = [];
+      for (DocumentReference friendRef in friendRefs) {
+        final friendSnapshot = await friendRef.get();
+        final friendData = friendSnapshot.data() as Map<String, dynamic>;
+
+        String avatarPath = friendData['avatar'] ?? 'default_avatar.png';
+        String avatarUrl = await _getAvatarUrl(avatarPath);
+
+        friendsList.add({
+          'userId': friendRef.id,
+          'username': friendData['email'].split('@')[0],
+          'avatar': avatarUrl
+        });
+      }
+
+      setState(() {
+        friends = friendsList;
+        filteredFriends = friendsList;
+      });
+    } catch (e) {
+      debugPrint('Error fetching friends: $e');
+    }
+  }
+
+  Future<String> _getAvatarUrl(String avatarPath) async {
+    try {
+      String url = await FirebaseStorage.instance
+          .ref('avatars/$avatarPath')
+          .getDownloadURL();
+      return url;
+    } catch (e) {
+      debugPrint('Error fetching avatar: $e');
+      return 'https://example.com/default_avatar.png'; // Provide a default image URL if needed
+    }
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      filteredFriends = friends
+          .where((friend) =>
+              friend['username']!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  void _navigateToChat(String userId) {
+    // Navigate to chat page with the selected user
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChatPage(userId: userId), // Assuming ChatPage is implemented
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +118,10 @@ class _CreateMessageState extends State<CreateMessage> {
             const SizedBox(height: 15),
             InkWell(
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const CreateGroup()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateGroup()),
+                );
               },
               child: Row(
                 children: [
@@ -108,7 +175,12 @@ class _CreateMessageState extends State<CreateMessage> {
               child: ListView.builder(
                 itemCount: filteredFriends.length,
                 itemBuilder: (context, index) {
-                  return ;
+                  return itemMessage(
+                    context,
+                    filteredFriends[index]['avatar']!,
+                    filteredFriends[index]['username']!,
+                    filteredFriends[index]['userId']!,
+                  );
                 },
               ),
             ),
@@ -128,7 +200,7 @@ class _CreateMessageState extends State<CreateMessage> {
       padding: const EdgeInsets.only(bottom: 25.0),
       child: InkWell(
         onTap: () {
-          _navigateToChat();
+          _navigateToChat(userId);
         },
         child: Row(
           children: [
@@ -269,6 +341,25 @@ class _CreateMessageState extends State<CreateMessage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Assuming you have implemented a ChatPage
+class ChatPage extends StatelessWidget {
+  final String userId;
+
+  const ChatPage({required this.userId, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chat'),
+      ),
+      body: Center(
+        child: Text('Chat with $userId'),
       ),
     );
   }

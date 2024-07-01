@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/models/structure/auth_model.dart';
@@ -16,14 +17,16 @@ class _AddFriendPageState extends State<AddFriendPage> {
   List<Auth> allUsers = [];
   List<Auth> filteredUsers = [];
   TextEditingController searchController = TextEditingController();
+  late String currentUserId;
 
   @override
   void initState() {
     super.initState();
+    currentUserId = FirebaseAuth.instance.currentUser!.uid;
     _authStore.getAllUsers().listen((users) {
       setState(() {
-        allUsers = users;
-        filteredUsers = users;
+        allUsers = users.where((user) => user.uid != currentUserId).toList();
+        filteredUsers = allUsers;
       });
     });
     searchController.addListener(() {

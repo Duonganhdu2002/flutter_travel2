@@ -36,12 +36,13 @@ class _UserDetailPageState extends State<UserDetailPage> {
     setState(() {
       userDetail = userSnapshot;
       areFriends = (userSnapshot['list_friend'] as List)
-          .map((e) => (e as DocumentReference).id)
+          .map((e) => (e is DocumentReference ? e.id : e))
           .contains(currentUserId);
       isRequestPending = (userSnapshot['invite_list'] as List)
-          .map((e) => (e as DocumentReference).id)
+          .map((e) => (e is DocumentReference ? e.id : e))
           .contains(currentUserId);
     });
+
     _fetchAvatar(userSnapshot['avatar']);
   }
 

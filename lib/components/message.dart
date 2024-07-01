@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/create_message.dart';
 import 'package:flutter_application_1/components/search_input.dart';
 import 'package:flutter_application_1/pages/chat_page.dart';
@@ -23,45 +23,57 @@ class _MessageComponentState extends State<MessageComponent> {
   @override
   void initState() {
     super.initState();
+    if (userId.isNotEmpty) {
+      _streamConversations().listen((data) {
+        setState(() {
+          conversations = data;
+          filteredConversations = data;
+        });
+      });
+    } else {
+      debugPrint('User not logged in');
+    }
   }
 
   Stream<List<Map<String, dynamic>>> _streamConversations() {
     return FirebaseFirestore.instance
         .collection('conversations')
-        .where('participants',
-            arrayContains: FirebaseFirestore.instance.doc('auths/$userId'))
+        .where('participants', arrayContains: 'auths/$userId')
         .snapshots()
         .asyncMap((querySnapshot) async {
       List<Map<String, dynamic>> fetchedConversations = [];
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-        // Fetch participant details
         List<Map<String, String>> participants = [];
-        for (DocumentReference participantRef in data['participants']) {
-          DocumentSnapshot participantSnapshot = await participantRef.get();
-          Map<String, dynamic> participantData =
-              participantSnapshot.data() as Map<String, dynamic>;
+        for (String participantPath in List<String>.from(data['participants'] ?? [])) {
+          DocumentSnapshot participantSnapshot =
+              await FirebaseFirestore.instance.doc(participantPath).get();
+          Map<String, dynamic>? participantData =
+              participantSnapshot.data() as Map<String, dynamic>?;
 
-          // Fetch the avatar URL from Firebase Storage
-          String avatarUrl = await _getAvatarUrl(participantData['avatar']);
+          String avatarUrl = await _getAvatarUrl(participantData?['avatar'] ?? '');
 
           participants.add({
             '_id': participantSnapshot.id,
-            'username': participantData['email'].split('@')[0],
+            'username': (participantData?['email'] ?? 'unknown').split('@')[0],
             'avatar': avatarUrl,
           });
         }
 
-        // Fetch the latest message details
-        DocumentSnapshot messageSnapshot = await data['messages'].get();
+        QuerySnapshot messageSnapshot = await doc.reference
+            .collection('messages')
+            .orderBy('createdAt', descending: true)
+            .limit(1)
+            .get();
         String latestMessageText = 'No messages yet';
         String latestMessageTime = '';
-        if (messageSnapshot.exists) {
+        if (messageSnapshot.docs.isNotEmpty) {
+          DocumentSnapshot latestMessageDoc = messageSnapshot.docs.first;
           Map<String, dynamic> messageData =
-              messageSnapshot.data() as Map<String, dynamic>;
-          latestMessageText = messageData['message'];
-          Timestamp timestamp = messageData['createdAt'];
+              latestMessageDoc.data() as Map<String, dynamic>;
+          latestMessageText = messageData['text'] ?? 'No message text';
+          Timestamp timestamp = messageData['createdAt'] ?? Timestamp.now();
           latestMessageTime = DateFormat('hh:mm').format(timestamp.toDate());
         }
 
@@ -69,20 +81,25 @@ class _MessageComponentState extends State<MessageComponent> {
           'participants': participants,
           'latestMessageText': latestMessageText,
           'latestMessageTime': latestMessageTime,
-          'name': data['name'],
+          'name': data['name'] ?? 'Unknown',
           'isGroup': data['isGroup'] ?? false,
+          'docRef': doc.reference,
         });
       }
+      debugPrint('Fetched Conversations: $fetchedConversations');
       return fetchedConversations;
     });
   }
 
   Future<String> _getAvatarUrl(String avatarPath) async {
     try {
-      String url = await FirebaseStorage.instance
-          .ref('avatars/$avatarPath')
-          .getDownloadURL();
-      return url;
+      if (avatarPath.isNotEmpty) {
+        String url = await FirebaseStorage.instance
+            .ref('avatars/$avatarPath')
+            .getDownloadURL();
+        return url;
+      }
+      return 'assets/images/placeholder_avatar.jpg';
     } catch (e) {
       debugPrint('Error fetching avatar: $e');
       return 'assets/images/placeholder_avatar.jpg';
@@ -103,20 +120,18 @@ class _MessageComponentState extends State<MessageComponent> {
   }
 
   void _navigateToChat(
-    String friendId,
-    String friendUsername,
-    bool isGroupChat,
-    List<Map<String, String>> participants,
+    String groupName,
+    List<DocumentReference> friendRefs,
+    DocumentReference conversationId,
   ) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChatPage(
           userId: userId,
-          friendId: friendId,
-          friendUsername: friendUsername,
-          isGroupChat: isGroupChat,
-          participants: participants,
+          friendRefs: friendRefs,
+          groupName: groupName,
+          conversationId: conversationId,
         ),
       ),
     );
@@ -171,8 +186,9 @@ class _MessageComponentState extends State<MessageComponent> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return const Center(
-                        child: Text('Error loading conversations'));
+                    return Center(
+                        child: Text(
+                            'Error loading conversations: ${snapshot.error.toString()}'));
                   }
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('No conversations found'));
@@ -194,6 +210,13 @@ class _MessageComponentState extends State<MessageComponent> {
                         return Container();
                       }
 
+                      List<DocumentReference> friendRefs =
+                          conversation['participants']
+                              .map<DocumentReference>((participant) {
+                        return FirebaseFirestore.instance
+                            .doc('auths/${participant['_id']}');
+                      }).toList();
+
                       return itemMessage(
                         context,
                         friend['avatar'] ??
@@ -201,9 +224,9 @@ class _MessageComponentState extends State<MessageComponent> {
                         conversation['name'],
                         conversation['latestMessageText'],
                         conversation['latestMessageTime'],
-                        friend['_id'],
+                        conversation['docRef'],
                         conversation['isGroup'],
-                        conversation['participants'].cast<Map<String, String>>(),
+                        friendRefs,
                       );
                     },
                   );
@@ -222,15 +245,15 @@ class _MessageComponentState extends State<MessageComponent> {
     String nameUser,
     String showMessage,
     String timeSend,
-    String friendId,
+    DocumentReference docRef,
     bool isGroupChat,
-    List<Map<String, String>> participants,
+    List<DocumentReference> friendRefs,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 25.0),
       child: InkWell(
         onTap: () {
-          _navigateToChat(friendId, nameUser, isGroupChat, participants);
+          _navigateToChat(nameUser, friendRefs, docRef);
         },
         child: Row(
           children: [

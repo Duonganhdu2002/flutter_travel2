@@ -84,17 +84,20 @@ class _CreateMessageState extends State<CreateMessage> {
     });
   }
 
-  void _navigateToChat(String userId, String username, String avatar, bool isGroupChat) {
-    // Navigate to chat page with the selected user
+  void _navigateToChat(
+    List<DocumentReference> friendRefs,
+    String groupName,
+    DocumentReference conversationId, // Add conversationId to the method
+  ) {
+    // Navigate to chat page with the selected user or group
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChatPage(
           userId: currentUserId,
-          friendId: userId,
-          friendUsername: username,
-          isGroupChat: isGroupChat,
-          participants: isGroupChat ? friends : [{'userId': userId, 'username': username, 'avatar': avatar}], // Add friends for group chat or the friend for one-on-one chat
+          friendRefs: friendRefs,
+          groupName: groupName,
+          conversationId: conversationId, // Pass conversationId
         ),
       ),
     );
@@ -152,7 +155,7 @@ class _CreateMessageState extends State<CreateMessage> {
                             if (Navigator.of(context).canPop()) {
                               Navigator.of(context).pop();
                             } else {
-                              // Trang hiện tại là trang gốc, không thực hiện pop
+                              // Current page is the root page, do nothing
                             }
                           },
                         ),
@@ -164,10 +167,10 @@ class _CreateMessageState extends State<CreateMessage> {
                     "Create a group chat",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 200),
+                  const Spacer(),
                   SvgPicture.asset(
                     "assets/images/RightArrow.svg",
-                  )
+                  ),
                 ],
               ),
             ),
@@ -206,8 +209,43 @@ class _CreateMessageState extends State<CreateMessage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 25.0),
       child: InkWell(
-        onTap: () {
-          _navigateToChat(userId, nameUser, pathImage, false);
+        onTap: () async {
+          // Check if a conversation exists
+          final conversationSnapshot = await FirebaseFirestore.instance
+              .collection('conversations')
+              .where('participants',
+                  arrayContains: FirebaseFirestore.instance
+                      .collection('auths')
+                      .doc(currentUserId))
+              .get();
+
+          DocumentReference conversationId;
+
+          if (conversationSnapshot.docs.isNotEmpty) {
+            conversationId = conversationSnapshot.docs.first.reference;
+          } else {
+            // Create a new conversation
+            final newConversation = {
+              'participants': [
+                FirebaseFirestore.instance
+                    .collection('auths')
+                    .doc(currentUserId),
+                FirebaseFirestore.instance.collection('auths').doc(userId),
+              ],
+              'name': nameUser,
+              'isGroup': false,
+              'createdAt': FieldValue.serverTimestamp(),
+            };
+            conversationId = await FirebaseFirestore.instance
+                .collection('conversations')
+                .add(newConversation);
+          }
+
+          _navigateToChat(
+            [FirebaseFirestore.instance.collection('auths').doc(userId)],
+            nameUser,
+            conversationId,
+          );
         },
         child: Row(
           children: [
@@ -270,6 +308,12 @@ class _CreateMessageState extends State<CreateMessage> {
       child: InkWell(
         onTap: () {
           // Implement navigation to group chat here
+          _navigateToChat(
+            [FirebaseFirestore.instance.collection('auths').doc(groupName)],
+            groupName,
+            FirebaseFirestore.instance.collection('conversations').doc(
+                groupName), // Assuming the conversationId is the same as the groupName
+          );
         },
         child: Row(
           children: [
@@ -344,7 +388,7 @@ class _CreateMessageState extends State<CreateMessage> {
                   ),
                   SvgPicture.asset(
                     "assets/images/RightArrow.svg",
-                  )
+                  ),
                 ],
               ),
             ),

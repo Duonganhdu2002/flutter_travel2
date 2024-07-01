@@ -6,6 +6,7 @@ import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/models/structure/conversation_model.dart';
 import 'package:flutter_application_1/models/structure/message_model.dart';
+import 'package:flutter_application_1/pages/chat_page.dart';
 import 'package:flutter_application_1/services/firestore/conversations_store.dart';
 import 'package:flutter_application_1/services/firestore/messages_store.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -120,10 +121,10 @@ class _CreateGroupState extends State<CreateGroup> {
         participants: selectedFriends
             .map((userId) => FirebaseFirestore.instance.doc('auths/$userId'))
             .toList(),
-        messages: FirebaseFirestore.instance.collection('messages').doc(),
         name: 'New Group', // Set a default name for the group
         isGroup: true, // Indicate that this is a group conversation
-        groupOwner: FirebaseFirestore.instance.doc('auths/$currentUserId'), // Set the current user as the group owner
+        groupOwner: FirebaseFirestore.instance.doc(
+            'auths/$currentUserId'), // Set the current user as the group owner
       );
 
       DocumentReference conversationRef =
@@ -136,6 +137,8 @@ class _CreateGroupState extends State<CreateGroup> {
         receivedId: selectedFriends
             .map((userId) => FirebaseFirestore.instance.doc('auths/$userId'))
             .toList(),
+        createdAt: Timestamp.now(),
+        conversationId: conversationRef, // Assign the conversation ID
       );
 
       await _messageStore.addMessage(message);
@@ -143,10 +146,24 @@ class _CreateGroupState extends State<CreateGroup> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Group created successfully')),
       );
+
+      // Navigate to the chat page for the new group
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(
+            userId: currentUserId,
+            friendRefs: conversation.participants,
+            groupName: conversation.name,
+            conversationId: conversationRef,
+          ),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error creating group: $e')),
       );
+      debugPrint('Error creating group: $e');
     }
   }
 

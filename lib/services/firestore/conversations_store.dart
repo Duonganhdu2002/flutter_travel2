@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/models/structure/conversation_model.dart';
 
 class ConversationStore {
@@ -18,8 +18,9 @@ class ConversationStore {
     }
   }
 
-  Stream<Conversation?> streamConversationById(String id) {
-    return conversationCollection.doc(id).snapshots().map((snapshot) {
+  Stream<Conversation?> streamConversationById(
+      DocumentReference conversationId) {
+    return conversationId.snapshots().map((snapshot) {
       if (snapshot.exists) {
         return Conversation.fromSnapshot(snapshot);
       } else {
@@ -32,10 +33,10 @@ class ConversationStore {
     });
   }
 
-  Future<void> updateConversation(
-      String id, Map<String, dynamic> updatedData) async {
+  Future<void> updateConversation(DocumentReference conversationId,
+      Map<String, dynamic> updatedData) async {
     try {
-      await conversationCollection.doc(id).update(updatedData);
+      await conversationId.update(updatedData);
       debugPrint('Conversation updated successfully');
     } catch (e) {
       debugPrint('Error updating conversation: $e');
@@ -43,9 +44,9 @@ class ConversationStore {
     }
   }
 
-  Future<void> deleteConversation(String id) async {
+  Future<void> deleteConversation(DocumentReference conversationId) async {
     try {
-      await conversationCollection.doc(id).delete();
+      await conversationId.delete();
       debugPrint('Conversation deleted successfully');
     } catch (e) {
       debugPrint('Error deleting conversation: $e');

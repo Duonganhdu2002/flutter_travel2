@@ -3,21 +3,25 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class TextInput extends StatefulWidget {
   final Function(String) onSendMessage;
+  final TextEditingController controller;
   final FocusNode? focusNode;
 
-  const TextInput({super.key, required this.onSendMessage, this.focusNode});
+  const TextInput({
+    Key? key,
+    required this.onSendMessage,
+    required this.controller,
+    this.focusNode,
+  }) : super(key: key);
 
   @override
   State<TextInput> createState() => _TextInputState();
 }
 
 class _TextInputState extends State<TextInput> {
-  final TextEditingController _controller = TextEditingController();
-
   void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      widget.onSendMessage(_controller.text);
-      _controller.clear();
+    if (widget.controller.text.isNotEmpty) {
+      widget.onSendMessage(widget.controller.text);
+      widget.controller.clear();
     }
   }
 
@@ -41,7 +45,7 @@ class _TextInputState extends State<TextInput> {
                   children: [
                     Expanded(
                       child: TextField(
-                        controller: _controller,
+                        controller: widget.controller,
                         focusNode: widget.focusNode,
                         decoration: const InputDecoration(
                           hintText: 'Type your message',
@@ -51,6 +55,9 @@ class _TextInputState extends State<TextInput> {
                               fontWeight: FontWeight.w400),
                           border: InputBorder.none,
                         ),
+                        onChanged: (value) {
+                          setState(() {});
+                        },
                         onSubmitted: (_) => _sendMessage(),
                       ),
                     ),
@@ -81,15 +88,19 @@ class _TextInputState extends State<TextInput> {
               child: Stack(
                 children: [
                   IconButton(
-                    icon: ImageFiltered(
-                      imageFilter: const ColorFilter.mode(
-                          Colors.white, BlendMode.srcATop),
-                      child: SvgPicture.asset(
-                        "assets/images/voice.svg",
-                        width: 24,
-                        height: 24,
-                      ),
-                    ),
+                    icon: widget.controller.text.isNotEmpty
+                        ? SvgPicture.asset(
+                            "assets/images/send.svg",
+                            width: 24,
+                            height: 24,
+                            color: Colors.white,
+                          )
+                        : SvgPicture.asset(
+                            "assets/images/voice.svg",
+                            width: 24,
+                            height: 24,
+                            color: Colors.white,
+                          ),
                     onPressed: _sendMessage,
                   )
                 ],

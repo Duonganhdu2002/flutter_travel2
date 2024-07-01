@@ -6,6 +6,7 @@ import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/components/create_group.dart';
 import 'package:flutter_application_1/components/search_input.dart';
+import 'package:flutter_application_1/pages/chat_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CreateMessage extends StatefulWidget {
@@ -83,13 +84,18 @@ class _CreateMessageState extends State<CreateMessage> {
     });
   }
 
-  void _navigateToChat(String userId) {
+  void _navigateToChat(String userId, String username, String avatar, bool isGroupChat) {
     // Navigate to chat page with the selected user
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            ChatPage(userId: userId), // Assuming ChatPage is implemented
+        builder: (context) => ChatPage(
+          userId: currentUserId,
+          friendId: userId,
+          friendUsername: username,
+          isGroupChat: isGroupChat,
+          participants: isGroupChat ? friends : [{'userId': userId, 'username': username, 'avatar': avatar}], // Add friends for group chat or the friend for one-on-one chat
+        ),
       ),
     );
   }
@@ -175,11 +181,12 @@ class _CreateMessageState extends State<CreateMessage> {
               child: ListView.builder(
                 itemCount: filteredFriends.length,
                 itemBuilder: (context, index) {
+                  final friend = filteredFriends[index];
                   return itemMessage(
                     context,
-                    filteredFriends[index]['avatar']!,
-                    filteredFriends[index]['username']!,
-                    filteredFriends[index]['userId']!,
+                    friend['avatar']!,
+                    friend['username']!,
+                    friend['userId']!,
                   );
                 },
               ),
@@ -200,7 +207,7 @@ class _CreateMessageState extends State<CreateMessage> {
       padding: const EdgeInsets.only(bottom: 25.0),
       child: InkWell(
         onTap: () {
-          _navigateToChat(userId);
+          _navigateToChat(userId, nameUser, pathImage, false);
         },
         child: Row(
           children: [
@@ -261,7 +268,9 @@ class _CreateMessageState extends State<CreateMessage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 25.0),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          // Implement navigation to group chat here
+        },
         child: Row(
           children: [
             Expanded(
@@ -341,25 +350,6 @@ class _CreateMessageState extends State<CreateMessage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Assuming you have implemented a ChatPage
-class ChatPage extends StatelessWidget {
-  final String userId;
-
-  const ChatPage({required this.userId, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat'),
-      ),
-      body: Center(
-        child: Text('Chat with $userId'),
       ),
     );
   }

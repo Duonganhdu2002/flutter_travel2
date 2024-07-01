@@ -4,7 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/create_message.dart';
 import 'package:flutter_application_1/components/search_input.dart';
+import 'package:flutter_application_1/pages/chat_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class MessageComponent extends StatefulWidget {
   const MessageComponent({super.key});
@@ -35,7 +37,7 @@ class _MessageComponentState extends State<MessageComponent> {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
         // Fetch participant details
-        List<Map<String, dynamic>> participants = [];
+        List<Map<String, String>> participants = [];
         for (DocumentReference participantRef in data['participants']) {
           DocumentSnapshot participantSnapshot = await participantRef.get();
           Map<String, dynamic> participantData =
@@ -51,22 +53,24 @@ class _MessageComponentState extends State<MessageComponent> {
           });
         }
 
-        // Fetch messages details
+        // Fetch the latest message details
         DocumentSnapshot messageSnapshot = await data['messages'].get();
-        List<Map<String, dynamic>> messages = [];
+        String latestMessageText = 'No messages yet';
+        String latestMessageTime = '';
         if (messageSnapshot.exists) {
           Map<String, dynamic> messageData =
               messageSnapshot.data() as Map<String, dynamic>;
-          messages.add({
-            'message': messageData['message'],
-            'createdAt': messageData['createdAt']
-          });
+          latestMessageText = messageData['message'];
+          Timestamp timestamp = messageData['createdAt'];
+          latestMessageTime = DateFormat('hh:mm').format(timestamp.toDate());
         }
 
         fetchedConversations.add({
           'participants': participants,
-          'messages': messages,
-          'name': data['name'], // Add this line to include the name field
+          'latestMessageText': latestMessageText,
+          'latestMessageTime': latestMessageTime,
+          'name': data['name'],
+          'isGroup': data['isGroup'] ?? false,
         });
       }
       return fetchedConversations;
@@ -81,7 +85,7 @@ class _MessageComponentState extends State<MessageComponent> {
       return url;
     } catch (e) {
       debugPrint('Error fetching avatar: $e');
-      return 'assets/images/placeholder_avatar.jpg'; // Provide a default image URL if needed
+      return 'assets/images/placeholder_avatar.jpg';
     }
   }
 
@@ -96,6 +100,26 @@ class _MessageComponentState extends State<MessageComponent> {
                   participant['_id'] != userId))
           .toList();
     });
+  }
+
+  void _navigateToChat(
+    String friendId,
+    String friendUsername,
+    bool isGroupChat,
+    List<Map<String, String>> participants,
+  ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          userId: userId,
+          friendId: friendId,
+          friendUsername: friendUsername,
+          isGroupChat: isGroupChat,
+          participants: participants,
+        ),
+      ),
+    );
   }
 
   @override
@@ -155,34 +179,31 @@ class _MessageComponentState extends State<MessageComponent> {
                   }
 
                   conversations = snapshot.data!;
-                  filteredConversations =
-                      conversations; // Ensure the filter is updated
+                  filteredConversations = conversations;
 
                   return ListView.builder(
                     itemCount: filteredConversations.length,
                     itemBuilder: (context, index) {
                       final conversation = filteredConversations[index];
-                      final latestMessage = conversation['messages'].isNotEmpty
-                          ? conversation['messages'][0]['message']
-                          : 'No messages yet';
                       final friend = conversation['participants'].firstWhere(
                         (participant) => participant['_id'] != userId,
-                        orElse: () => <String,
-                            dynamic>{}, // Return an empty map with the correct type
+                        orElse: () => <String, String>{},
                       );
 
                       if (friend.isEmpty) {
-                        return Container(); // or handle the empty case as needed
+                        return Container();
                       }
 
                       return itemMessage(
                         context,
                         friend['avatar'] ??
                             'assets/images/placeholder_avatar.jpg',
-                        conversation['name'], // Use conversation name here
-                        latestMessage,
-                        '07:76', // Replace with actual time if available
+                        conversation['name'],
+                        conversation['latestMessageText'],
+                        conversation['latestMessageTime'],
                         friend['_id'],
+                        conversation['isGroup'],
+                        conversation['participants'].cast<Map<String, String>>(),
                       );
                     },
                   );
@@ -202,19 +223,14 @@ class _MessageComponentState extends State<MessageComponent> {
     String showMessage,
     String timeSend,
     String friendId,
+    bool isGroupChat,
+    List<Map<String, String>> participants,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 25.0),
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatPage(
-                userId: userId, // Use the actual user ID
-              ),
-            ),
-          );
+          _navigateToChat(friendId, nameUser, isGroupChat, participants);
         },
         child: Row(
           children: [

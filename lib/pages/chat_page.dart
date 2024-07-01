@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
@@ -5,18 +6,23 @@ import 'package:flutter_application_1/components/call_icon.dart';
 import 'package:flutter_application_1/components/receiver_message.dart';
 import 'package:flutter_application_1/components/sender_message.dart';
 import 'package:flutter_application_1/components/text_input.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:flutter_application_1/models/structure/message_model.dart';
+import 'package:flutter_application_1/services/firestore/messages_store.dart';
 
 class ChatPage extends StatefulWidget {
   final String userId;
   final String friendId;
   final String friendUsername;
+  final bool isGroupChat;
+  final List<Map<String, String>> participants;
 
   const ChatPage({
     super.key,
     required this.userId,
     required this.friendId,
     required this.friendUsername,
+    this.isGroupChat = false,
+    this.participants = const [],
   });
 
   @override
@@ -24,16 +30,14 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final List<Map<String, String>> messages = [];
-  late io.Socket socket;
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
+  final TextEditingController _messageController = TextEditingController();
+  final MessageStore _messageStore = MessageStore();
 
   @override
   void initState() {
     super.initState();
-    connectToServer();
-
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         _scrollToBottom();
@@ -41,91 +45,40 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  void connectToServer() {
-    socket = io.io('http://10.0.2.2:8080', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
-
-    socket.connect();
-
-    socket.on('connect', (_) {
-      debugPrint('connected');
-      socket
-          .emit('join', {'userId': widget.userId, 'friendId': widget.friendId});
-    });
-
-    socket.on('initial_messages', (data) {
-      try {
-        List<Map<String, String>> fetchedMessages =
-            (data as List).map((message) {
-          return {
-            'type':
-                message['senderId'] == widget.userId ? 'sender' : 'receiver',
-            'message': message['message'].toString(),
-          };
-        }).toList();
-
-        setState(() {
-          messages.clear();
-          messages.addAll(fetchedMessages);
-        });
-
-        _scrollToBottom();
-      } catch (e) {
-        debugPrint('Error parsing initial messages: $e');
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
-    });
-
-    socket.on('receive_message', (data) {
-      try {
-        setState(() {
-          messages.add({
-            'type': data['senderId'] == widget.userId ? 'sender' : 'receiver',
-            'message': data['message'].toString(),
-          });
-        });
-
-        _scrollToBottom();
-      } catch (e) {
-        debugPrint('Error receiving message: $e');
-      }
-    });
-
-    socket.on('connect_error', (data) {
-      debugPrint('Connection Error: $data');
-    });
-
-    socket.on('disconnect', (_) {
-      debugPrint('Disconnected');
     });
   }
 
-  void sendMessage(String message) {
-    final msg = {
-      'senderId': widget.userId,
-      'receiverId': widget.friendId,
-      'message': message,
-    };
-    socket.emit('send_message', msg);
-    setState(() {
-      messages.add({'type': 'sender', 'message': message});
-    });
-
+  void sendMessage(String messageText) async {
+    if (messageText.trim().isEmpty) return;
+    final message = Message(
+      text: messageText,
+      senderId: FirebaseFirestore.instance.doc('auths/${widget.userId}'),
+      receivedId: widget.participants
+          .map((p) => FirebaseFirestore.instance.doc('auths/${p['userId']}'))
+          .toList(),
+    );
+    await _messageStore.addMessage(message);
+    _messageController.clear();
     _scrollToBottom();
   }
 
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    });
+  String getAvatar(String userId) {
+    final participant = widget.participants.firstWhere(
+        (participant) => participant['userId'] == userId,
+        orElse: () => {});
+    return participant['avatar'] ?? 'default_avatar.png';
   }
 
   @override
   void dispose() {
-    socket.disconnect();
     _scrollController.dispose();
     _focusNode.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
@@ -149,22 +102,59 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  if (message["type"] == "sender") {
-                    return SenderMessage(message: message["message"]!);
-                  } else {
-                    return ReceiverMessage(message: message["message"]!);
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('messages')
+                    .where('receivedId',
+                        arrayContains: FirebaseFirestore.instance
+                            .doc('auths/${widget.userId}'))
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
                   }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading messages'));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No messages found'));
+                  }
+
+                  final messages = snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    final senderId = (data['senderId'] as DocumentReference).id;
+                    return {
+                      'type': senderId == widget.userId ? 'sender' : 'receiver',
+                      'message': data['message'],
+                      'avatar': getAvatar(senderId),
+                    };
+                  }).toList();
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      if (message["type"] == "sender") {
+                        return SenderMessage(
+                          message: message["message"],
+                          avatar: message['avatar'],
+                        );
+                      } else {
+                        return ReceiverMessage(
+                          message: message["message"],
+                          avatar: message['avatar'],
+                        );
+                      }
+                    },
+                  );
                 },
               ),
             ),
           ),
           TextInput(
             onSendMessage: sendMessage,
+            controller: _messageController,
             focusNode: _focusNode,
           ),
         ],

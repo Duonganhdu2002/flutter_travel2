@@ -79,8 +79,8 @@ class _EditProfileState extends State<EditProfile>
   }
 
   void _selectImage(BuildContext context) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       await uploadImage(File(image.path));
     }
@@ -99,12 +99,14 @@ class _EditProfileState extends State<EditProfile>
       String downloadURL = await imageRef.getDownloadURL();
       print("Download URL: $downloadURL");
 
-     
-      // Cập nhật tên file ảnh đại diện trong Firestore
+      // Cập nhật URL ảnh đại diện trong Firestore
       await FirebaseFirestore.instance
           .collection('auths')
           .doc(userId)
           .update({'avatar': fileName});
+
+      // Cập nhật URL ảnh mới vào `UserImage` widget bằng cách sử dụng `setState` để cập nhật giao diện của `UserImage` (nếu cần thiết)
+      setState(() {});
     } catch (e) {
       print("Error uploading image: $e");
     }

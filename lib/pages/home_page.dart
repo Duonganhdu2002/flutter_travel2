@@ -60,28 +60,17 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return CustomBar(
           leftWidget: const Text(" "),
-          rightWidget: NotificationIcon(
-            notificationExistence: true,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const NotificationHomePage()),
-              );
-            },
-          ),
         );
       case 1:
         return const CustomBar(
           leftWidget: Text(
-            "...",
+            "",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           centerWidget1: Text(
             "Planning",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          rightWidget: NotificationIcon(notificationExistence: false),
         );
       case 2:
         return const CustomBar(

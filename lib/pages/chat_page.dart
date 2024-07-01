@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_application_1/models/structure/message_model.dart';
 import 'package:flutter_application_1/services/firestore/messages_store.dart';
 
@@ -61,13 +63,12 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<String> _getAvatarUrl(String avatarPath) async {
     try {
-      String url = await FirebaseStorage.instance
+      return await FirebaseStorage.instance
           .ref('avatars/$avatarPath')
           .getDownloadURL();
-      return url;
     } catch (e) {
       debugPrint('Error fetching avatar: $e');
-      return 'https://example.com/default_avatar.png'; // Default avatar URL
+      return 'https://firebasestorage.googleapis.com/v0/b/travel-app-2f56c.appspot.com/o/avatars%2Fdefault_avatar.png?alt=media&token=21eb4ed4-489a-409c-9dbe-1cfa5b96b1af'; // Default avatar URL
     }
   }
 
@@ -130,7 +131,7 @@ class _ChatPageState extends State<ChatPage> {
                     itemBuilder: (context, index) {
                       final message = messages[index];
                       final avatarUrl = userAvatars[message.senderId.id] ??
-                          'https://example.com/default_avatar.png';
+                          'https://firebasestorage.googleapis.com/v0/b/travel-app-2f56c.appspot.com/o/avatars%2Fdefault_avatar.png?alt=media&token=21eb4ed4-489a-409c-9dbe-1cfa5b96b1af';
 
                       bool showAvatar = true;
                       if (index > 0 &&
@@ -162,7 +163,8 @@ class _ChatPageState extends State<ChatPage> {
                                 Align(
                                   alignment: Alignment.topCenter,
                                   child: CircleAvatar(
-                                    backgroundImage: NetworkImage(avatarUrl),
+                                    backgroundImage:
+                                        CachedNetworkImageProvider(avatarUrl),
                                   ),
                                 ),
                             ],
@@ -178,7 +180,8 @@ class _ChatPageState extends State<ChatPage> {
                                 Align(
                                   alignment: Alignment.topCenter,
                                   child: CircleAvatar(
-                                    backgroundImage: NetworkImage(avatarUrl),
+                                    backgroundImage:
+                                        CachedNetworkImageProvider(avatarUrl),
                                   ),
                                 ),
                               const SizedBox(width: 8),
@@ -210,20 +213,66 @@ class _ChatPageState extends State<ChatPage> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _textEditingController,
-                      focusNode: _focusNode,
-                      decoration: const InputDecoration(
-                        hintText: 'Type your message',
-                        border: OutlineInputBorder(),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF7F7F9),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      onSubmitted: (value) => _sendMessage(),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 5),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _textEditingController,
+                              focusNode: _focusNode,
+                              decoration: const InputDecoration(
+                                hintText: 'Type your message',
+                                hintStyle: TextStyle(
+                                  color: Color(0xFF7D848D),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                border: InputBorder.none,
+                              ),
+                              onSubmitted: (_) => _sendMessage(),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          ColorFiltered(
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF7D848D),
+                              BlendMode.srcATop,
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/images/file.svg",
+                              width: 28,
+                              height: 28,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: _sendMessage,
+                  const SizedBox(
+                    width: 20,
                   ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFD521),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: IconButton(
+                      icon: SvgPicture.asset(
+                        "assets/images/send.svg",
+                        width: 24,
+                        height: 24,
+                        color: Colors.white,
+                      ),
+                      onPressed: _sendMessage,
+                    ),
+                  )
                 ],
               ),
             ),

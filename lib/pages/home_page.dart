@@ -9,7 +9,6 @@ import 'package:flutter_application_1/components/notification_icon.dart';
 import 'package:flutter_application_1/components/planning_component.dart';
 import 'package:flutter_application_1/components/profile.dart';
 import 'package:flutter_application_1/components/search_component.dart';
-import 'package:flutter_application_1/pages/notification_home_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

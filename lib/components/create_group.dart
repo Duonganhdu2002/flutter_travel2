@@ -123,8 +123,7 @@ class _CreateGroupState extends State<CreateGroup> {
         messages: FirebaseFirestore.instance.collection('messages').doc(),
         name: 'New Group', // Set a default name for the group
         isGroup: true, // Indicate that this is a group conversation
-        groupOwner: FirebaseFirestore.instance.doc(
-            'auths/$currentUserId'), // Set the current user as the group owner
+        groupOwner: FirebaseFirestore.instance.doc('auths/$currentUserId'), // Set the current user as the group owner
       );
 
       DocumentReference conversationRef =

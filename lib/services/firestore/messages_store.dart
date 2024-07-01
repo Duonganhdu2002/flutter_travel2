@@ -7,14 +7,15 @@ class MessageStore {
       FirebaseFirestore.instance.collection('messages');
 
   Future<void> addMessage(Message message) async {
-    try {
-      await messageCollection.add(message.toMap());
-      debugPrint('Message added successfully');
-    } catch (e) {
-      debugPrint('Error adding message: $e');
-      rethrow;
-    }
+    final messageData = {
+      'message': message.text,
+      'senderId': message.senderId,
+      'receivedId': message.receivedId.map((doc) => doc.id).toList(),
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+    await messageCollection.add(messageData);
   }
+
 
   Stream<Message?> streamMessageById(String id) {
     return messageCollection.doc(id).snapshots().map((snapshot) {

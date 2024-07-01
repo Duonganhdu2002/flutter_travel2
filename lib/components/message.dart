@@ -181,7 +181,6 @@ class _MessageComponentState extends State<MessageComponent> {
                             'assets/images/placeholder_avatar.jpg',
                         conversation['name'], // Use conversation name here
                         latestMessage,
-                        1, // Replace with actual status if available
                         '07:76', // Replace with actual time if available
                         friend['_id'],
                       );
@@ -201,7 +200,6 @@ class _MessageComponentState extends State<MessageComponent> {
     String pathImage,
     String nameUser,
     String showMessage,
-    int statusMessage,
     String timeSend,
     String friendId,
   ) {
@@ -246,21 +244,6 @@ class _MessageComponentState extends State<MessageComponent> {
                                   color: Color(0xFF1B1E28),
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500),
-                            ),
-                            ImageFiltered(
-                              imageFilter: const ColorFilter.mode(
-                                Color(0xFF7D848D),
-                                BlendMode.srcATop,
-                              ),
-                              child: SvgPicture.asset(
-                                statusMessage == 1
-                                    ? "assets/images/sent.svg"
-                                    : statusMessage == 2
-                                        ? "assets/images/received.svg"
-                                        : "assets/images/seen.svg",
-                                width: 14,
-                                height: 14,
-                              ),
                             ),
                           ],
                         ),

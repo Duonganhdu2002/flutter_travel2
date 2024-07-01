@@ -1,10 +1,15 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/components/user_image.dart';
 import 'package:flutter_application_1/services/firestore/auths_store.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -39,7 +44,7 @@ class _EditProfileState extends State<EditProfile>
         fullNameController.text = userData.fullName;
         locationController.text = userData.location ?? '';
         phoneController.text = userData.phone ?? '';
-      }); 
+      });
     }
   }
 
@@ -74,7 +79,35 @@ class _EditProfileState extends State<EditProfile>
   }
 
   void _selectImage(BuildContext context) async {
-    // Image selection logic here
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      await uploadImage(File(image.path));
+    }
+  }
+
+  Future<void> uploadImage(File file) async {
+    try {
+      String fileName = path.basename(file.path);
+      final storageRef = FirebaseStorage.instance.ref();
+      final imageRef = storageRef.child("avatars/$fileName");
+
+      // Upload file
+      await imageRef.putFile(file);
+
+      // Lấy URL tải xuống
+      String downloadURL = await imageRef.getDownloadURL();
+      print("Download URL: $downloadURL");
+
+     
+      // Cập nhật tên file ảnh đại diện trong Firestore
+      await FirebaseFirestore.instance
+          .collection('auths')
+          .doc(userId)
+          .update({'avatar': fileName});
+    } catch (e) {
+      print("Error uploading image: $e");
+    }
   }
 
   void _validateForm() {

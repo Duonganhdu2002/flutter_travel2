@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: buildCustomBar(selected),
       backgroundColor: const Color(0xFFFFFFFF),
+      
       bottomNavigationBar: CustomBottomBar(
         onTabChange: (index) => navigateBottomBar(index),
         selectedIndex: selected,

@@ -165,7 +165,7 @@ class PlanningComponent extends StatelessWidget {
                                 size: 18,
                               ),
                               Text(
-                                "857/Persons",
+                                "20000",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Color(0xFF7D848D),

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_application_1/components/create_message.dart';
-import 'package:flutter_application_1/components/search_input.dart';
+import 'package:flutter_application_1/components/create_group.dart';
 import 'package:flutter_application_1/pages/chat_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'dart:async';
 
 class MessageComponent extends StatefulWidget {
   const MessageComponent({super.key});
@@ -16,6 +16,8 @@ class MessageComponent extends StatefulWidget {
 }
 
 class _MessageComponentState extends State<MessageComponent> {
+  final StreamController<List<Map<String, dynamic>>> _streamController =
+      StreamController<List<Map<String, dynamic>>>();
   List<Map<String, dynamic>> conversations = [];
   List<Map<String, dynamic>> filteredConversations = [];
   String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -25,10 +27,8 @@ class _MessageComponentState extends State<MessageComponent> {
     super.initState();
     if (userId.isNotEmpty) {
       _streamConversations().listen((data) {
-        setState(() {
-          conversations = data;
-          filteredConversations = data;
-        });
+        conversations = data;
+        _updateFilteredConversations('');
       });
     } else {
       debugPrint('User not logged in');
@@ -46,13 +46,15 @@ class _MessageComponentState extends State<MessageComponent> {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
         List<Map<String, String>> participants = [];
-        for (String participantPath in List<String>.from(data['participants'] ?? [])) {
+        for (String participantPath
+            in List<String>.from(data['participants'] ?? [])) {
           DocumentSnapshot participantSnapshot =
               await FirebaseFirestore.instance.doc(participantPath).get();
           Map<String, dynamic>? participantData =
               participantSnapshot.data() as Map<String, dynamic>?;
 
-          String avatarUrl = await _getAvatarUrl(participantData?['avatar'] ?? '');
+          String avatarUrl =
+              await _getAvatarUrl(participantData?['avatar'] ?? '');
 
           participants.add({
             '_id': participantSnapshot.id,
@@ -68,19 +70,23 @@ class _MessageComponentState extends State<MessageComponent> {
             .get();
         String latestMessageText = 'No messages yet';
         String latestMessageTime = '';
+        Timestamp? latestTimestamp;
         if (messageSnapshot.docs.isNotEmpty) {
           DocumentSnapshot latestMessageDoc = messageSnapshot.docs.first;
           Map<String, dynamic> messageData =
               latestMessageDoc.data() as Map<String, dynamic>;
           latestMessageText = messageData['text'] ?? 'No message text';
           Timestamp timestamp = messageData['createdAt'] ?? Timestamp.now();
-          latestMessageTime = DateFormat('hh:mm').format(timestamp.toDate());
+          latestMessageTime =
+              DateFormat('hh:mm').format(timestamp.toDate());
+          latestTimestamp = timestamp;
         }
 
         fetchedConversations.add({
           'participants': participants,
           'latestMessageText': latestMessageText,
           'latestMessageTime': latestMessageTime,
+          'latestTimestamp': latestTimestamp,
           'name': data['name'] ?? 'Unknown',
           'isGroup': data['isGroup'] ?? false,
           'docRef': doc.reference,
@@ -107,16 +113,24 @@ class _MessageComponentState extends State<MessageComponent> {
   }
 
   void _searchConversations(String query) {
-    setState(() {
-      filteredConversations = conversations
-          .where((conversation) => conversation['participants'].any(
-              (participant) =>
-                  participant['username']
-                      .toLowerCase()
-                      .contains(query.toLowerCase()) &&
-                  participant['_id'] != userId))
-          .toList();
+    _updateFilteredConversations(query);
+  }
+
+  void _updateFilteredConversations(String query) {
+    filteredConversations = conversations
+        .where((conversation) =>
+            conversation['name'].toLowerCase().contains(query.toLowerCase()) ||
+            conversation['participants'].any((participant) =>
+                (participant as Map<String, String>)['username']
+                    ?.toLowerCase()
+                    .contains(query.toLowerCase()) ?? false))
+        .toList();
+    filteredConversations.sort((a, b) {
+      Timestamp aTimestamp = a['latestTimestamp'] ?? Timestamp.now();
+      Timestamp bTimestamp = b['latestTimestamp'] ?? Timestamp.now();
+      return bTimestamp.compareTo(aTimestamp);
     });
+    _streamController.add(filteredConversations);
   }
 
   void _navigateToChat(
@@ -135,6 +149,12 @@ class _MessageComponentState extends State<MessageComponent> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
   }
 
   @override
@@ -161,7 +181,7 @@ class _MessageComponentState extends State<MessageComponent> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const CreateMessage()),
+                          builder: (context) => const CreateGroup()),
                     );
                   },
                   child: ImageFiltered(
@@ -176,11 +196,59 @@ class _MessageComponentState extends State<MessageComponent> {
               ],
             ),
             const SizedBox(height: 20),
-            SearchInput(onSearch: _searchConversations),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F7F9),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              child: Row(
+                children: [
+                  ImageFiltered(
+                    imageFilter: const ColorFilter.mode(
+                      Color(0xFF7D848D),
+                      BlendMode.srcATop,
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/images/Search.svg",
+                      width: 28,
+                      height: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      onChanged: _searchConversations,
+                      decoration: const InputDecoration(
+                        hintText: 'Search for chats & messages',
+                        hintStyle: TextStyle(
+                          color: Color(0xFF7D848D),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  ImageFiltered(
+                    imageFilter: const ColorFilter.mode(
+                      Color(0xFF7D848D),
+                      BlendMode.srcATop,
+                    ),
+                    child: SvgPicture.asset(
+                      "assets/images/RightArrow.svg",
+                      width: 28,
+                      height: 28,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<List<Map<String, dynamic>>>(
-                stream: _streamConversations(),
+                stream: _streamController.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -194,13 +262,10 @@ class _MessageComponentState extends State<MessageComponent> {
                     return const Center(child: Text('No conversations found'));
                   }
 
-                  conversations = snapshot.data!;
-                  filteredConversations = conversations;
-
                   return ListView.builder(
-                    itemCount: filteredConversations.length,
+                    itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
-                      final conversation = filteredConversations[index];
+                      final conversation = snapshot.data![index];
                       final friend = conversation['participants'].firstWhere(
                         (participant) => participant['_id'] != userId,
                         orElse: () => <String, String>{},
@@ -221,7 +286,9 @@ class _MessageComponentState extends State<MessageComponent> {
                         context,
                         friend['avatar'] ??
                             'assets/images/placeholder_avatar.jpg',
-                        conversation['name'],
+                        conversation['isGroup']
+                            ? conversation['name']
+                            : friend['username'],
                         conversation['latestMessageText'],
                         conversation['latestMessageTime'],
                         conversation['docRef'],
@@ -257,42 +324,33 @@ class _MessageComponentState extends State<MessageComponent> {
         },
         child: Row(
           children: [
+            SizedBox(
+              width: 60,
+              child: ClipOval(
+                child: Image.network(
+                  pathImage,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
             Expanded(
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: 60,
-                    child: Image.network(
-                      pathImage,
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                    ),
+                  Text(
+                    nameUser,
+                    style: const TextStyle(
+                        color: Color(0xFF1B1E28),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              nameUser,
-                              style: const TextStyle(
-                                  color: Color(0xFF1B1E28),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          showMessage,
-                          style: const TextStyle(color: Color(0xFF7D848D)),
-                        ),
-                      ],
-                    ),
-                  )
+                  Text(
+                    showMessage,
+                    style: const TextStyle(color: Color(0xFF7D848D)),
+                  ),
                 ],
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/notification.dart';
+import 'package:flutter_application_1/pages/make_plan_page.dart';
 import 'package:flutter_application_1/services/firestore/auths_store.dart';
 import 'package:flutter_application_1/services/firestore/places_store.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -480,14 +481,14 @@ class _DetailsPageState extends State<DetailsPage> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => MakePlanPage(
-                                      //       placeId: widget.placeId,
-                                      //     ),
-                                      //   ),
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MakePlanPage(
+                                            placeId: widget.placeId,
+                                          ),
+                                        ),
+                                      );
                                     },
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(

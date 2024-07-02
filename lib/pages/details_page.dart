@@ -348,24 +348,6 @@ class _DetailsPageState extends State<DetailsPage> {
                                       ),
                                     ],
                                   ),
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        '\$59/',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Person',
-                                        style: TextStyle(
-                                          color: Color(0xFF7D848D),
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ],
-                                  )
                                 ],
                               ),
                               const SizedBox(

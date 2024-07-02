@@ -260,20 +260,6 @@ class _HomeComponentState extends State<HomeComponent>
                                             maxLines: 1,
                                           ),
                                         ),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.star,
-                                              size: 18,
-                                              color: Colors.amber,
-                                            ),
-                                            Text(
-                                              " ${placeData['averageRating'].toStringAsFixed(1)}",
-                                              style:
-                                                  const TextStyle(fontSize: 16),
-                                            ),
-                                          ],
-                                        ),
                                       ],
                                     ),
                                   ),

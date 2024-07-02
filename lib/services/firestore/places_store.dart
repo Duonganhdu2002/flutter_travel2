@@ -3,8 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PlaceStore {
   final CollectionReference places =
       FirebaseFirestore.instance.collection("places");
-  final CollectionReference ratings =
-      FirebaseFirestore.instance.collection("ratings");
 
   Future<void> addNewPlace({
     required Map<String, dynamic> address,
@@ -26,35 +24,15 @@ class PlaceStore {
   }
 
   Stream<List<Map<String, dynamic>>> streamTop10Places() {
-    return places.snapshots().asyncMap((querySnapshot) async {
-      List<Map<String, dynamic>> placesWithRatings = [];
-
-      for (var placeDoc in querySnapshot.docs) {
-        var ratingsQuery = await ratings
-            .where('placeRef', isEqualTo: placeDoc.reference)
-            .get();
-
-        double averageRating = 0;
-        if (ratingsQuery.docs.isNotEmpty) {
-          int totalRatings = ratingsQuery.docs.length;
-          int sumRatings = ratingsQuery.docs.fold<int>(
-            0,
-            (sumRatings, ratingDoc) =>
-                sumRatings + (ratingDoc['rating'] as int),
-          );
-          averageRating = sumRatings / totalRatings;
-        }
-
-        var placeData = placeDoc.data() as Map<String, dynamic>;
-        placeData['averageRating'] = averageRating;
-        placeData['documentId'] = placeDoc.id; // Include the document ID
-
-        placesWithRatings.add(placeData);
-      }
-
-      placesWithRatings.sort((a, b) => (b['averageRating'] as double)
-          .compareTo(a['averageRating'] as double));
-      return placesWithRatings.take(10).toList();
+    return places.snapshots().map((querySnapshot) {
+      return querySnapshot.docs
+          .map((doc) {
+            var placeData = doc.data() as Map<String, dynamic>;
+            placeData['documentId'] = doc.id; // Include the document ID
+            return placeData;
+          })
+          .take(10)
+          .toList();
     });
   }
 
@@ -82,4 +60,16 @@ class PlaceStore {
   Future<void> deletePlace(String placeId) {
     return places.doc(placeId).delete();
   }
+
+  // New method to stream all places without ratings
+  Stream<List<Map<String, dynamic>>> streamAllPlaces() {
+    return places.snapshots().map((querySnapshot) {
+      return querySnapshot.docs.map((doc) {
+        var placeData = doc.data() as Map<String, dynamic>;
+        placeData['documentId'] = doc.id; // Include the document ID
+        return placeData;
+      }).toList();
+    });
+  }
+  
 }

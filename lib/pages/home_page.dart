@@ -58,8 +58,8 @@ class _HomePageState extends State<HomePage> {
   PreferredSizeWidget buildCustomBar(int selected) {
     switch (selected) {
       case 0:
-        return CustomBar(
-          leftWidget: const Text(" "),
+        return const CustomBar(
+          leftWidget: Text(" "),
         );
       case 1:
         return const CustomBar(

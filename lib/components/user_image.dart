@@ -29,7 +29,7 @@ class _UserImageState extends State<UserImage> {
           .getDownloadURL();
       return url;
     } catch (e) {
-      print("Error fetching image URL: $e");
+      debugPrint("Error fetching image URL: $e");
       return null;
     }
   }

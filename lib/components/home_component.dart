@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/components/public_plan.dart';
 import 'package:flutter_application_1/pages/details_page.dart';
 import 'package:flutter_application_1/services/firestore/places_store.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -318,165 +319,35 @@ class _HomeComponentState extends State<HomeComponent>
                       },
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  const Text(
-                    "Explore",
-                    style: TextStyle(
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 20, bottom: 20, left: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.restaurant, size: 20),
-                                SizedBox(height: 10),
-                                Text(
-                                  " Nhà hàng",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ],
-                            ),
-                          ),
+
+                  const SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Public Plans",
+                        style: TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 20, bottom: 20, left: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.local_activity, size: 20),
-                                SizedBox(height: 10),
-                                Flexible(
-                                  child: Text(
-                                    "Hoạt động giải trí ",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.hotel, size: 20),
-                          SizedBox(height: 10),
-                          Text(
-                            " Khách sạn",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(40),
-                    decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Tripadvisor thiếu một địa điểm?",
-                          textAlign: TextAlign.center,
+                      GestureDetector(
+                        onTap: () {
+                          // Add navigation to view all public plans
+                        },
+                        child: const Text(
+                          "View all",
                           style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            fontSize: 16,
+                            color: Colors.amber,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            // Button pressed action
-                          },
-                          icon: const Icon(Icons.add_location,
-                              color: Colors.white),
-                          label: const Text(
-                            "Thêm địa điểm bị thiếu",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.amber,
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                color: Colors.white,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
+                  const PublicPlansWidget(), // Thêm widget mới
                 ],
               ),
             );

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -28,6 +30,8 @@ class _MakePlanPageState extends State<MakePlanPage>
   TextEditingController fundController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
+  TextEditingController desiredParticipantsController =
+      TextEditingController(); // Thêm controller cho desiredParticipants
   TextEditingController searchController = TextEditingController();
   bool isPublic = false;
   bool isFormValid = false;
@@ -59,7 +63,8 @@ class _MakePlanPageState extends State<MakePlanPage>
             await (friendRef as DocumentReference).get();
         friendsList.add({
           'id': friendSnapshot.id,
-          'username': friendSnapshot['email'].split('@')[0], // Extract username from email
+          'username': friendSnapshot['email']
+              .split('@')[0], // Extract username from email
           'avatar': friendSnapshot['avatar'],
         });
       }
@@ -77,6 +82,8 @@ class _MakePlanPageState extends State<MakePlanPage>
     fundController.addListener(_validateForm);
     startDateController.addListener(_validateForm);
     endDateController.addListener(_validateForm);
+    desiredParticipantsController
+        .addListener(_validateForm); // Thêm listener cho desiredParticipants
     searchController.addListener(() {
       onSearch(searchController.text);
     });
@@ -88,6 +95,8 @@ class _MakePlanPageState extends State<MakePlanPage>
     fundController.dispose();
     startDateController.dispose();
     endDateController.dispose();
+    desiredParticipantsController
+        .dispose(); // Dispose desiredParticipantsController
     searchController.dispose();
     super.dispose();
   }
@@ -97,7 +106,9 @@ class _MakePlanPageState extends State<MakePlanPage>
       isFormValid = planNameController.text.isNotEmpty &&
           fundController.text.isNotEmpty &&
           startDateController.text.isNotEmpty &&
-          endDateController.text.isNotEmpty;
+          endDateController.text.isNotEmpty &&
+          desiredParticipantsController
+              .text.isNotEmpty; // Validate desiredParticipants
     });
   }
 
@@ -126,10 +137,25 @@ class _MakePlanPageState extends State<MakePlanPage>
   void _savePlan(BuildContext context) async {
     if (isFormValid) {
       try {
+        // Ensure the current user is added to the participants
+        if (!selectedFriends.any((friend) => friend['id'] == userId)) {
+          selectedFriends.add({
+            'id': userId,
+            'avatar': '',
+            'username': ''
+          }); // Add user info here
+        }
+
         DocumentReference placeRef =
             FirebaseFirestore.instance.collection('places').doc(widget.placeId);
         DocumentReference planOwner =
             FirebaseFirestore.instance.collection('auths').doc(userId);
+
+        Map<DocumentReference, int> initialContributions = {
+          for (var friend in selectedFriends)
+            FirebaseFirestore.instance.collection('auths').doc(friend['id']): 0
+        };
+
         Plan newPlan = Plan(
           id: '',
           dayEnd: Timestamp.fromDate(
@@ -146,12 +172,17 @@ class _MakePlanPageState extends State<MakePlanPage>
           placeRef: placeRef,
           planOwner: planOwner,
           public: isPublic,
+          contributions: initialContributions,
+          desiredParticipants: int.parse(desiredParticipantsController
+              .text), // Set giá trị desiredParticipants
         );
+
         await FirebaseFirestore.instance
             .collection('plannings')
             .add(newPlan.toMap());
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Plan saved successfully')));
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Plan saved successfully')));
 
         await _createGroup(newPlan.name);
 
@@ -172,7 +203,8 @@ class _MakePlanPageState extends State<MakePlanPage>
 
       final conversation = Conversation(
         participants: selectedFriends
-            .map((friend) => FirebaseFirestore.instance.doc('auths/${friend['id']}'))
+            .map((friend) =>
+                FirebaseFirestore.instance.doc('auths/${friend['id']}'))
             .toList(),
         name: groupName,
         isGroup: true,
@@ -186,7 +218,8 @@ class _MakePlanPageState extends State<MakePlanPage>
         text: 'Group has been created.',
         senderId: FirebaseFirestore.instance.doc('auths/$userId'),
         receivedId: selectedFriends
-            .map((friend) => FirebaseFirestore.instance.doc('auths/${friend['id']}'))
+            .map((friend) =>
+                FirebaseFirestore.instance.doc('auths/${friend['id']}'))
             .toList(),
         createdAt: Timestamp.now(),
         conversationId: conversationRef,
@@ -220,7 +253,8 @@ class _MakePlanPageState extends State<MakePlanPage>
   void toggleSelection(Map<String, String> friend) {
     setState(() {
       if (selectedFriends.any((selected) => selected['id'] == friend['id'])) {
-        selectedFriends.removeWhere((selected) => selected['id'] == friend['id']);
+        selectedFriends
+            .removeWhere((selected) => selected['id'] == friend['id']);
       } else {
         selectedFriends.add(friend);
       }
@@ -487,6 +521,15 @@ class _MakePlanPageState extends State<MakePlanPage>
                       fundController,
                       TextInputType.number,
                     ),
+                    customTextField(
+                      "Desired Participants",
+                      const Color(0xFFF7F7F9),
+                      true,
+                      BorderSide.none,
+                      BorderRadius.circular(14),
+                      desiredParticipantsController,
+                      TextInputType.number,
+                    ), // Thêm trường nhập cho desiredParticipants
                     const SizedBox(
                       height: 20,
                     ),

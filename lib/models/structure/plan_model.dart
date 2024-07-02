@@ -10,6 +10,8 @@ class Plan {
   final DocumentReference placeRef;
   final DocumentReference planOwner;
   final bool public;
+  final Map<DocumentReference, int> contributions;
+  final int desiredParticipants; // Thêm thuộc tính desiredParticipants
 
   Plan({
     required this.id,
@@ -21,6 +23,8 @@ class Plan {
     required this.placeRef,
     required this.planOwner,
     required this.public,
+    required this.contributions,
+    required this.desiredParticipants, // Thêm vào constructor
   });
 
   factory Plan.fromSnapshot(DocumentSnapshot snapshot) {
@@ -35,6 +39,10 @@ class Plan {
       placeRef: data['placeRef'],
       planOwner: data['planOwner'],
       public: data['public'],
+      contributions: (data['contributions'] as Map<String, dynamic>).map(
+          (key, value) =>
+              MapEntry(FirebaseFirestore.instance.doc(key), value as int)),
+      desiredParticipants: data['desiredParticipants'], // Lấy giá trị từ snapshot
     );
   }
 
@@ -48,6 +56,10 @@ class Plan {
       'placeRef': placeRef,
       'planOwner': planOwner,
       'public': public,
+      'contributions': contributions.map((key, value) => MapEntry(key.path, value)),
+      'desiredParticipants': desiredParticipants, // Thêm vào map
     };
   }
+
+  int get currentFund => contributions.values.fold(0, (sum, value) => sum + value);
 }

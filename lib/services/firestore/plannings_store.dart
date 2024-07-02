@@ -1,10 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/models/structure/plan_model.dart';
 
 class PlanningStore {
   final CollectionReference planCollection =
       FirebaseFirestore.instance.collection('plannings');
+
+  Stream<List<Plan>> streamPublicPlans() {
+    return planCollection.where('public', isEqualTo: true).snapshots().map(
+        (snapshot) =>
+            snapshot.docs.map((doc) => Plan.fromSnapshot(doc)).toList());
+  }
 
   Future<void> addPlan(Plan plan) async {
     try {
@@ -15,17 +21,19 @@ class PlanningStore {
     }
   }
 
-  Stream<Plan?> streamPlanById(String id) {
-    return planCollection.doc(id).snapshots().map((snapshot) {
-      if (snapshot.exists) {
-        return Plan.fromSnapshot(snapshot);
-      } else {
-        debugPrint('Plan not found');
-        return null;
-      }
+  Stream<List<Plan>> streamPlansByUserId(String userId) {
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection('auths').doc(userId);
+
+    return planCollection
+        .where('participants', arrayContains: userRef)
+        .snapshots()
+        .map((snapshot) {
+      debugPrint('Fetched ${snapshot.docs.length} plans for user $userId');
+      return snapshot.docs.map((doc) => Plan.fromSnapshot(doc)).toList();
     }).handleError((error) {
-      debugPrint('Error streaming plan: $error');
-      return null;
+      debugPrint('Error streaming plans: $error');
+      return [];
     });
   }
 

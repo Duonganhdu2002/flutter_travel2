@@ -97,7 +97,7 @@ class _EditProfileState extends State<EditProfile>
 
       // Lấy URL tải xuống
       String downloadURL = await imageRef.getDownloadURL();
-      print("Download URL: $downloadURL");
+      debugPrint("Download URL: $downloadURL");
 
       // Cập nhật URL ảnh đại diện trong Firestore
       await FirebaseFirestore.instance
@@ -108,7 +108,7 @@ class _EditProfileState extends State<EditProfile>
       // Cập nhật URL ảnh mới vào `UserImage` widget bằng cách sử dụng `setState` để cập nhật giao diện của `UserImage` (nếu cần thiết)
       setState(() {});
     } catch (e) {
-      print("Error uploading image: $e");
+      debugPrint("Error uploading image: $e");
     }
   }
 

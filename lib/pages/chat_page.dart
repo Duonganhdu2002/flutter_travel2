@@ -152,7 +152,7 @@ class _ChatPageState extends State<ChatPage> {
                                   margin:
                                       const EdgeInsets.symmetric(vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: Colors.blue[100],
+                                    color: const Color(0xFFFFD521),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(message.text),
@@ -240,17 +240,6 @@ class _ChatPageState extends State<ChatPage> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          ColorFiltered(
-                            colorFilter: const ColorFilter.mode(
-                              Color(0xFF7D848D),
-                              BlendMode.srcATop,
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/file.svg",
-                              width: 28,
-                              height: 28,
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -264,11 +253,10 @@ class _ChatPageState extends State<ChatPage> {
                       borderRadius: BorderRadius.circular(40),
                     ),
                     child: IconButton(
-                      icon: SvgPicture.asset(
-                        "assets/images/send.svg",
-                        width: 24,
-                        height: 24,
+                      icon: const Icon(
+                        Icons.send,
                         color: Colors.white,
+                        size: 24,
                       ),
                       onPressed: _sendMessage,
                     ),

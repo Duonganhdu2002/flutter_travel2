@@ -34,38 +34,17 @@ class _SearchComponentState extends State<SearchComponent> {
                         Expanded(
                           child: TextField(
                             controller: searchController,
-                            decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.search,
+                            decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.search,
                                     size: 35, color: Colors.grey),
                                 hintText: 'Search anything ',
-                                hintStyle: const TextStyle(
+                                hintStyle: TextStyle(
                                   color: Color(0xFF7D848D),
                                   fontSize: 20,
                                   fontWeight: FontWeight.w400,
                                 ),
                                 border: InputBorder.none,
-                                suffixIcon: IntrinsicHeight(
-                                  child: SizedBox(
-                                    width: double.minPositive,
-                                    child: Row(
-                                      children: [
-                                        const VerticalDivider(
-                                          width: double.minPositive,
-                                          thickness: 2,
-                                          indent: 10,
-                                          endIndent: 10,
-                                          color: Colors.grey,
-                                        ),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: const Icon(
-                                                Icons.mic_none_outlined,
-                                                size: 30,
-                                                color: Colors.grey)),
-                                      ],
-                                    ),
-                                  ),
-                                )),
+                                ),
                           ),
                         ),
                         const SizedBox(width: 10),

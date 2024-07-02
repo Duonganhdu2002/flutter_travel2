@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/structure/plan_model.dart';
 import 'package:flutter_application_1/models/structure/place_model.dart';
+import 'package:flutter_application_1/pages/plan_detail.dart';
 import 'package:flutter_application_1/services/firestore/plannings_store.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -103,7 +104,7 @@ class PublicPlansWidget extends StatelessWidget {
           return const Center(child: Text('No public plans available'));
         } else {
           return SizedBox(
-            height: 500,
+            height: 530,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: snapshot.data!.length,
@@ -121,6 +122,8 @@ class PublicPlansWidget extends StatelessWidget {
                       return const Center(child: Text('Place not found'));
                     } else {
                       final place = placeSnapshot.data!;
+                      int amountPerPerson =
+                          plan.fund ~/ plan.desiredParticipants;
                       return Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Container(
@@ -140,7 +143,15 @@ class PublicPlansWidget extends StatelessWidget {
                           ),
                           child: GestureDetector(
                             onTap: () {
-                              // Add navigation to plan details page if needed
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlanDetailPage(
+                                    plan: plan,
+                                    place: place,
+                                  ),
+                                ),
+                              );
                             },
                             child: Column(
                               children: [
@@ -162,13 +173,31 @@ class PublicPlansWidget extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          plan.name,
+                                          place.name,
                                           style: const TextStyle(
                                             fontSize: 22,
                                             fontWeight: FontWeight.bold,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "\$${amountPerPerson.toString()} / person",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.green,
                                         ),
                                       ),
                                       Text(

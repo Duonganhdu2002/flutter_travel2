@@ -6,6 +6,8 @@ import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/models/structure/plan_model.dart';
 import 'package:flutter_application_1/models/structure/place_model.dart';
 import 'package:flutter_application_1/pages/user_detail_page.dart';
+import 'package:flutter_application_1/payment.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,6 +34,36 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
     _fetchFriends();
   }
 
+  Future<void> initPaymentSheet() async {
+    try {
+      final data = await createPaymentIntent(
+        name: "Test User",
+        address: "Test Address",
+        pin: "12345",
+        city: "Test City",
+        state: "Test State",
+        country: "US",
+        currency: "USD",
+        amount: "1000",
+      );
+
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: data['client_secret'],
+          merchantDisplayName: "Payment gateway",
+          style: ThemeMode.dark,
+        ),
+      );
+
+      await Stripe.instance.presentPaymentSheet();
+    } catch (e) {
+      debugPrint('Error initializing payment sheet: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   Future<void> _fetchFriends() async {
     try {
       final currentUserSnapshot = await FirebaseFirestore.instance
@@ -52,7 +84,6 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
         String avatarPath = friendData['avatar'] ?? 'default_avatar.png';
         String avatarUrl = await _getAvatarUrl(avatarPath);
 
-        // Chỉ thêm những người không phải là thành viên của kế hoạch
         if (!widget.plan.participants
             .any((participant) => participant.id == friendRef.id)) {
           friendsList.add({
@@ -80,7 +111,7 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
       return url;
     } catch (e) {
       debugPrint('Error fetching avatar: $e');
-      return 'assets/images/placeholder_avatar.jpg'; // Provide a default image URL if needed
+      return 'assets/images/placeholder_avatar.jpg';
     }
   }
 
@@ -95,8 +126,8 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
     }
 
     try {
-      // Update plan with selected participants
-      List updatedParticipants = widget.plan.participants;
+      List<DocumentReference> updatedParticipants =
+          List.from(widget.plan.participants);
       for (String friendId in selectedFriends) {
         updatedParticipants
             .add(FirebaseFirestore.instance.doc('auths/$friendId'));
@@ -324,13 +355,16 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
     );
   }
 
-  Stream<String> _getParticipantAvatarStream(DocumentReference participantRef) async* {
+  Stream<String> _getParticipantAvatarStream(
+      DocumentReference participantRef) async* {
     final participantSnapshot = await participantRef.snapshots().first;
-    String avatarPath = participantSnapshot.get('avatar') ?? 'default_avatar.png';
+    String avatarPath =
+        participantSnapshot.get('avatar') ?? 'default_avatar.png';
     yield await _getAvatarUrl(avatarPath);
   }
 
-  Stream<DocumentSnapshot> _getParticipantSnapshot(DocumentReference participantRef) {
+  Stream<DocumentSnapshot> _getParticipantSnapshot(
+      DocumentReference participantRef) {
     return participantRef.snapshots();
   }
 
@@ -353,7 +387,7 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
                 : const Text("Plan is full."))
             : ElevatedButton(
                 onPressed: () {
-                  // Add functionality to join and pay the amount
+                  initPaymentSheet();
                 },
                 child: const Text("Join and Pay"),
               ),
@@ -442,12 +476,16 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
                       return StreamBuilder<String>(
                         stream: _getParticipantAvatarStream(participantRef),
                         builder: (context, avatarSnapshot) {
-                          if (avatarSnapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
+                          if (avatarSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
                           } else if (avatarSnapshot.hasError) {
-                            return const Center(child: Text('Error loading avatar'));
+                            return const Center(
+                                child: Text('Error loading avatar'));
                           } else if (!avatarSnapshot.hasData) {
-                            return const Center(child: Text('Avatar not found'));
+                            return const Center(
+                                child: Text('Avatar not found'));
                           }
 
                           final participantAvatar = avatarSnapshot.data!;

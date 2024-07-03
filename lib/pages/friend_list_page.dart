@@ -116,7 +116,7 @@ class _FriendListPageState extends State<FriendListPage> {
                       friendList[index]['username']!,
                       style: const TextStyle(
                           color: Color(0xFF1B1E28),
-                          fontSize: 32,
+                          fontSize: 16,
                           fontWeight: FontWeight.w500),
                     ),
                     onTap: () {

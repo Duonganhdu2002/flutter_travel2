@@ -86,15 +86,37 @@ class _FriendListPageState extends State<FriendListPage> {
                 Expanded(
                   child: ListTile(
                     leading: SizedBox(
+                      width: 50, // Chiều rộng của ảnh
+                      height: 50, // Chiều cao của ảnh
                       child: friendList[index]['avatar'] != null
-                          ? Image.network(friendList[index]['avatar']!)
-                          : null,
+                          ? ClipOval(
+                              child: Image.network(
+                                friendList[index]['avatar']!,
+                                fit: BoxFit.cover,
+                                width: 80, // Chiều rộng của ảnh
+                                height: 80, // Chiều cao của ảnh
+                              ),
+                            )
+                          : ClipOval(
+                              child: Container(
+                                color: Colors
+                                    .grey, // Màu nền mặc định nếu không có ảnh
+                                width: 80,
+                                height: 80,
+                                child: const Icon(
+                                  Icons
+                                      .person, // Biểu tượng mặc định nếu không có ảnh
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              ),
+                            ),
                     ),
                     title: Text(
                       friendList[index]['username']!,
                       style: const TextStyle(
                           color: Color(0xFF1B1E28),
-                          fontSize: 20,
+                          fontSize: 32,
                           fontWeight: FontWeight.w500),
                     ),
                     onTap: () {

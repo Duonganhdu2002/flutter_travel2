@@ -214,11 +214,13 @@ class _FriendsRequestPageState extends State<FriendsRequestPage> {
         children: [
           SizedBox(
             width: 60,
-            child: Image.network(
-              avatarUrl,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
+            child: ClipOval(
+              child: Image.network(
+                avatarUrl,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(width: 20),

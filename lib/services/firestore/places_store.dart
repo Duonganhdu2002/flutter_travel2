@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/models/structure/place_model.dart';
 
 class PlaceStore {
   final CollectionReference places =
       FirebaseFirestore.instance.collection("places");
+
+      final CollectionReference ratings =
+      FirebaseFirestore.instance.collection("ratings");
 
   Future<void> addNewPlace({
     required Map<String, dynamic> address,
@@ -72,4 +76,80 @@ class PlaceStore {
     });
   }
   
+
+  Stream<List<Map<String, dynamic>>> streamAllPlacesWithRatings() {
+    return places.snapshots().asyncMap((querySnapshot) async {
+      List<Map<String, dynamic>> placesWithRatings = [];
+
+
+      for (var placeDoc in querySnapshot.docs) {
+        var ratingsQuery = await ratings
+            .where('placeRef', isEqualTo: placeDoc.reference)
+            .get();
+
+
+        double averageRating = 0;
+        if (ratingsQuery.docs.isNotEmpty) {
+          int totalRatings = ratingsQuery.docs.length;
+          int sumRatings = ratingsQuery.docs.fold<int>(
+            0,
+                (sumRatings, ratingDoc) =>
+            sumRatings + (ratingDoc['rating'] as int),
+          );
+          averageRating = sumRatings / totalRatings;
+        }
+
+
+        var placeData = placeDoc.data() as Map<String, dynamic>;
+        placeData['averageRating'] = double.parse(averageRating.toStringAsFixed(2)); // Làm tròn rating đến hai chữ số thập phân
+        placeData['documentId'] = placeDoc.id; // Bao gồm ID tài liệu
+
+
+        placesWithRatings.add(placeData);
+      }
+
+
+      placesWithRatings.sort((a, b) => (b['averageRating'] as double)
+          .compareTo(a['averageRating'] as double));
+      return placesWithRatings;
+    });
+  }
+
+
+
+
+  Stream<List<Map<String, dynamic>>> streamPagedPlaces(int pageNumber, int pageSize) {
+    return streamAllPlacesWithRatings().map((places) {
+      int startIndex = (pageNumber - 1) * pageSize;
+      int endIndex = startIndex + pageSize;
+      return places.sublist(startIndex, endIndex > places.length ? places.length : endIndex);
+    });
+  }
+
+
+  Future<List<Place>> getPlacesByCategory(String categoryId) async {
+    try {
+      QuerySnapshot querySnapshot = await places.where('categoryRef', isEqualTo: categoryId).get();
+      List<Place> placesList = querySnapshot.docs.map((doc) => Place.fromSnapshot(doc)).toList();
+      return placesList;
+    } catch (e) {
+      throw Exception('Error getting places by category: $e');
+    }
+  }
+
+
+  Future<List<Place>> getPlacesByLandmark(String landmarkId) async {
+    try {
+      QuerySnapshot querySnapshot = await places.where('address.landmark_id', isEqualTo: landmarkId).get();
+
+
+      List<Place> placesList = querySnapshot.docs.map((doc) => Place.fromSnapshot(doc)).toList();
+
+
+      return placesList;
+    } catch (e) {
+      throw Exception('Error fetching places by landmark: $e');
+    }
+  }
 }
+

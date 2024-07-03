@@ -24,6 +24,10 @@ class _PopularPlacesPageState extends State<PopularPlacesPage> {
     _loadPlaces();
   }
 
+  Future<void> _refreshData() async {
+    setState(() {});
+  }
+
   void _loadPlaces() async {
     setState(() {
       isLoading = true;
@@ -115,190 +119,193 @@ class _PopularPlacesPageState extends State<PopularPlacesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text(
-          "Popular Places",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {
-                popularPlaces.clear();
-                _loadPlaces();
-              });
-            },
+    return RefreshIndicator(
+      onRefresh: _refreshData,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text(
+            "Popular Places",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 15,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                setState(() {
+                  popularPlaces.clear();
+                  _loadPlaces();
+                });
+              },
             ),
-            const Text(
-              "All Popular Places",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: GridView.builder(
-                itemCount: popularPlaces.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisExtent: 320,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-                itemBuilder: (context, index) {
-                  final place = popularPlaces[index];
-                  final documentId = place['documentId'];
-                  final List<String> imageNames =
-                      List<String>.from(place['photos']);
-                  return  GestureDetector(
-                    onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetailsPage(
-                                      placeId: documentId,
-                                    ),
-                                  ),
-                                );
-                              },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.07),
-                            spreadRadius: 5,
-                            blurRadius: 9,
-                            offset: const Offset(-4, 8),
-                          )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 20,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              children: [
-                                _image(imageNames),
-                              ],
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 15,
+              ),
+              const Text(
+                "All Popular Places",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Expanded(
+                child: GridView.builder(
+                  itemCount: popularPlaces.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisExtent: 320,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                  ),
+                  itemBuilder: (context, index) {
+                    final place = popularPlaces[index];
+                    final documentId = place['documentId'];
+                    final List<String> imageNames =
+                        List<String>.from(place['photos']);
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailsPage(
+                              placeId: documentId,
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Text(
-                              place['name'] ?? '',
-                              textAlign: TextAlign.start,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              maxLines: 1,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_outlined,
-                                  size: 20,
-                                ),
-                                Text(
-                                  place['location'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Color(0xFF7D848D),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.yellow,
-                                  size: 18,
-                                ),
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.yellow,
-                                  size: 18,
-                                ),
-                                const Icon(
-                                  Icons.star,
-                                  color: Colors.yellow,
-                                  size: 18,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  '${place['averageRating']}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.cottage_outlined,
-                                  size: 18,
-                                ),
-                                Text(
-                                  place['type'] ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF7D848D),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.07),
+                              spreadRadius: 5,
+                              blurRadius: 9,
+                              offset: const Offset(-4, 8),
+                            )
                           ],
                         ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 20,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
+                                children: [
+                                  _image(imageNames),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                place['name'] ?? '',
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                maxLines: 1,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 20,
+                                  ),
+                                  Text(
+                                    place['location'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Color(0xFF7D848D),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.yellow,
+                                    size: 18,
+                                  ),
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.yellow,
+                                    size: 18,
+                                  ),
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.yellow,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    '${place['averageRating']}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.cottage_outlined,
+                                    size: 18,
+                                  ),
+                                  Text(
+                                    place['type'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF7D848D),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-            if (popularPlaces.length < 10)
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    currentPage++;
-                    _loadPlaces();
-                  });
-                },
-                child: const Text('Show more'),
-              ),
-          ],
+              if (popularPlaces.length < 10)
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      currentPage++;
+                      _loadPlaces();
+                    });
+                  },
+                  child: const Text('Show more'),
+                ),
+            ],
+          ),
         ),
       ),
     );

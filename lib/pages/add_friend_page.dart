@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/models/structure/auth_model.dart';
@@ -41,6 +42,21 @@ class _AddFriendPageState extends State<AddFriendPage> {
           .where((user) => user.email.toLowerCase().contains(query))
           .toList();
     });
+  }
+
+  Future<String> _getAvatarUrl(String userId) async {
+    try {
+      String avatarPath = 'avatars/$userId.png'; // Assumed path based on userId
+      String url =
+          await FirebaseStorage.instance.ref(avatarPath).getDownloadURL();
+      return url;
+    } catch (e) {
+      debugPrint('Error fetching avatar for $userId: $e');
+      // Returning URL for the default avatar image stored in Firebase Storage
+      return await FirebaseStorage.instance
+          .ref('avatars/default_avatar.png')
+          .getDownloadURL();
+    }
   }
 
   @override
@@ -123,14 +139,26 @@ class _AddFriendPageState extends State<AddFriendPage> {
                       },
                       child: Row(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Image.asset(
-                              "assets/images/Detail_img4.jpg",
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            ),
+                          FutureBuilder<String>(
+                            future: _getAvatarUrl(user.uid),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                return const Icon(Icons.error);
+                              } else {
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(40),
+                                  child: Image.network(
+                                    snapshot.data!,
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              }
+                            },
                           ),
                           const SizedBox(width: 20),
                           Expanded(

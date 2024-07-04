@@ -13,10 +13,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 class ChatPage extends StatefulWidget {
   final String userId;
   final List<DocumentReference> friendRefs;
-  final String groupName;
+  String groupName;
   final DocumentReference conversationId;
 
-  const ChatPage({
+  ChatPage({
     super.key,
     required this.userId,
     required this.friendRefs,
@@ -518,7 +518,10 @@ class _ChatPageState extends State<ChatPage> {
                 final newName = _groupNameController.text;
                 if (newName.isNotEmpty) {
                   // Update the group name in Firestore
-                  await widget.conversationId.update({'groupName': newName});
+                  await widget.conversationId.update({'name': newName});
+                  setState(() {
+                    widget.groupName = newName;
+                  });
                 }
                 Navigator.of(context).pop();
               },

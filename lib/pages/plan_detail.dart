@@ -5,6 +5,7 @@ import 'package:flutter_application_1/components/app_bar.dart';
 import 'package:flutter_application_1/components/back_icon.dart';
 import 'package:flutter_application_1/models/structure/plan_model.dart';
 import 'package:flutter_application_1/models/structure/place_model.dart';
+import 'package:flutter_application_1/pages/chat_page.dart';
 import 'package:flutter_application_1/pages/user_detail_page.dart';
 import 'package:flutter_application_1/payment.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -36,6 +37,9 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
 
   Future<void> initPaymentSheet() async {
     try {
+      int amountPerPerson = widget.plan.fund ~/ widget.plan.desiredParticipants;
+      int amountInCents = amountPerPerson * 100; // Convert to cents
+
       final data = await createPaymentIntent(
         name: "Test User",
         address: "Test Address",
@@ -44,7 +48,7 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
         state: "Test State",
         country: "US",
         currency: "USD",
-        amount: "1000",
+        amount: amountInCents.toString(),
       );
 
       await Stripe.instance.initPaymentSheet(
@@ -56,12 +60,95 @@ class _PlanDetailPageState extends State<PlanDetailPage> {
       );
 
       await Stripe.instance.presentPaymentSheet();
+
+      // If the payment is successful, update Firestore
+      await _addCurrentUserToParticipants();
+
+      // Add user to conversation participants
+      await _addCurrentUserToConversationParticipants();
+
+      // Navigate to group chat page
+      _navigateToGroupChat();
     } catch (e) {
       debugPrint('Error initializing payment sheet: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     }
+  }
+
+  Future<void> _addCurrentUserToParticipants() async {
+    try {
+      List<DocumentReference> updatedParticipants =
+          List<DocumentReference>.from(
+              widget.plan.participants.map((p) => p as DocumentReference));
+      DocumentReference currentUserRef =
+          FirebaseFirestore.instance.collection('auths').doc(currentUserId);
+
+      updatedParticipants.add(currentUserRef);
+
+      Map<DocumentReference, int> contributions = widget.plan.contributions;
+
+      contributions[currentUserRef] = 1;
+
+      Map<String, int> contributionsForFirestore =
+          contributions.map((key, value) => MapEntry(key.path, value));
+
+      await FirebaseFirestore.instance
+          .collection('plannings')
+          .doc(widget.plan.id)
+          .update({
+        'participants': updatedParticipants,
+        'contributions': contributionsForFirestore,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You have successfully joined the plan')),
+      );
+
+      setState(() {
+        widget.plan.participants.add(currentUserRef);
+      });
+    } catch (e) {
+      debugPrint('Error adding current user to participants: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Future<void> _addCurrentUserToConversationParticipants() async {
+    try {
+      DocumentReference currentUserRef =
+          FirebaseFirestore.instance.collection('auths').doc(currentUserId);
+
+      await widget.plan.conversationRef.update({
+        'participants': FieldValue.arrayUnion([currentUserRef.path]),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You have been added to the conversation')),
+      );
+    } catch (e) {
+      debugPrint('Error adding current user to conversation: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  void _navigateToGroupChat() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          userId: currentUserId,
+          friendRefs: List<DocumentReference>.from(widget.plan.participants),
+          groupName: widget.plan.name,
+          conversationId: widget.plan.conversationRef,
+        ),
+      ),
+    );
   }
 
   Future<void> _fetchFriends() async {

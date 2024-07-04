@@ -10,8 +10,10 @@ import 'package:flutter_application_1/models/structure/conversation_model.dart';
 import 'package:flutter_application_1/models/structure/message_model.dart';
 import 'package:flutter_application_1/models/structure/plan_model.dart';
 import 'package:flutter_application_1/pages/chat_page.dart';
+import 'package:flutter_application_1/payment.dart';
 import 'package:flutter_application_1/services/firestore/conversations_store.dart';
 import 'package:flutter_application_1/services/firestore/messages_store.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
@@ -30,8 +32,7 @@ class _MakePlanPageState extends State<MakePlanPage>
   TextEditingController fundController = TextEditingController();
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
-  TextEditingController desiredParticipantsController =
-      TextEditingController(); // Thêm controller cho desiredParticipants
+  TextEditingController desiredParticipantsController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   bool isPublic = false;
   bool isFormValid = false;
@@ -82,8 +83,7 @@ class _MakePlanPageState extends State<MakePlanPage>
     fundController.addListener(_validateForm);
     startDateController.addListener(_validateForm);
     endDateController.addListener(_validateForm);
-    desiredParticipantsController
-        .addListener(_validateForm); // Thêm listener cho desiredParticipants
+    desiredParticipantsController.addListener(_validateForm);
     searchController.addListener(() {
       onSearch(searchController.text);
     });
@@ -95,8 +95,7 @@ class _MakePlanPageState extends State<MakePlanPage>
     fundController.dispose();
     startDateController.dispose();
     endDateController.dispose();
-    desiredParticipantsController
-        .dispose(); // Dispose desiredParticipantsController
+    desiredParticipantsController.dispose();
     searchController.dispose();
     super.dispose();
   }
@@ -107,8 +106,7 @@ class _MakePlanPageState extends State<MakePlanPage>
           fundController.text.isNotEmpty &&
           startDateController.text.isNotEmpty &&
           endDateController.text.isNotEmpty &&
-          desiredParticipantsController
-              .text.isNotEmpty; // Validate desiredParticipants
+          desiredParticipantsController.text.isNotEmpty;
     });
   }
 
@@ -134,16 +132,13 @@ class _MakePlanPageState extends State<MakePlanPage>
         .getDownloadURL();
   }
 
-  void _savePlan(BuildContext context) async {
+  Future<void> _savePlan(
+      BuildContext context, DocumentReference conversationRef) async {
     if (isFormValid) {
       try {
         // Ensure the current user is added to the participants
         if (!selectedFriends.any((friend) => friend['id'] == userId)) {
-          selectedFriends.add({
-            'id': userId,
-            'avatar': '',
-            'username': ''
-          }); // Add user info here
+          selectedFriends.add({'id': userId, 'avatar': '', 'username': ''});
         }
 
         DocumentReference placeRef =
@@ -173,8 +168,8 @@ class _MakePlanPageState extends State<MakePlanPage>
           planOwner: planOwner,
           public: isPublic,
           contributions: initialContributions,
-          desiredParticipants: int.parse(desiredParticipantsController
-              .text), // Set giá trị desiredParticipants
+          desiredParticipants: int.parse(desiredParticipantsController.text),
+          conversationRef: conversationRef, // Lưu conversationRef vào kế hoạch
         );
 
         await FirebaseFirestore.instance
@@ -183,8 +178,6 @@ class _MakePlanPageState extends State<MakePlanPage>
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Plan saved successfully')));
-
-        await _createGroup(newPlan.name);
 
         Navigator.pop(context);
       } catch (e) {
@@ -231,6 +224,9 @@ class _MakePlanPageState extends State<MakePlanPage>
         const SnackBar(content: Text('Group created successfully')),
       );
 
+      // Save the plan with the conversation reference
+      await _savePlan(context, conversationRef);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -272,6 +268,42 @@ class _MakePlanPageState extends State<MakePlanPage>
             .toList();
       }
     });
+  }
+
+  Future<void> initPaymentSheet() async {
+    try {
+      int amount = int.parse(fundController.text);
+      int amountInCents = amount * 100; // Convert to cents
+
+      final data = await createPaymentIntent(
+        name: "Test User",
+        address: "Test Address",
+        pin: "12345",
+        city: "Test City",
+        state: "Test State",
+        country: "US",
+        currency: "USD",
+        amount: amountInCents.toString(),
+      );
+
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: data['client_secret'],
+          merchantDisplayName: "Payment gateway",
+          style: ThemeMode.dark,
+        ),
+      );
+
+      await Stripe.instance.presentPaymentSheet();
+
+      // If the payment is successful, create the group and save the plan
+      await _createGroup(planNameController.text);
+    } catch (e) {
+      debugPrint('Error initializing payment sheet: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   void _showFriendSelectionDialog() {
@@ -483,7 +515,7 @@ class _MakePlanPageState extends State<MakePlanPage>
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         rightWidget: InkWell(
-          onTap: isFormValid ? () => _savePlan(context) : null,
+          onTap: isFormValid ? () => initPaymentSheet() : null,
           child: Text(
             "Done",
             style: TextStyle(

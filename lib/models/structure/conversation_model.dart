@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Conversation {
   final List<DocumentReference> participants;
   final String name;
+  
   final bool isGroup;
   final DocumentReference? groupOwner;
 
